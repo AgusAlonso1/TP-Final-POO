@@ -5,6 +5,10 @@ public class Circle extends Ellipse {
         super(centerPoint, radius, radius);
     }
 
+    public Circle(Point startPoint, Point endPoint){
+        this(startPoint,Math.abs(endPoint.getX() - startPoint.getX()));
+    }
+
     @Override
     public String toString() {
         return String.format("Círculo [Centro: %s, Radio: %.2f]", getCenterPoint(), getRadius());
