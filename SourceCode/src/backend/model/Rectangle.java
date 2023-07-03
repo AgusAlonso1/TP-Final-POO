@@ -22,4 +22,17 @@ public class Rectangle implements Figure {
         return String.format("Rectángulo [ %s , %s ]", topLeft, bottomRight);
     }
 
+    @Override
+    public boolean pointIsIn(Point point){
+        return point.getX() > topLeft.getX() && point.getX() < bottomRight.getX() && point.getY() > topLeft.getY() && point.getY() < bottomRight.getY();
+    }
+
+    @Override
+    public void moveFigure(double diffX, double diffY){
+        topLeft.x += diffX;
+        bottomRight.x += diffX;
+        topLeft.y += diffY;
+        bottomRight.y += diffY;
+    }
+
 }

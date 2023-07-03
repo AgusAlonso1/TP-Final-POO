@@ -4,8 +4,8 @@ import backend.model.Point;
 import backend.model.Figure;
 import javafx.scene.control.ToggleButton;
 
-public class EspecifiedToggleButton extends ToggleButton { //Class which adds distiction to the buttons in the app.
-    private ButtonType type;
+public class EspecifiedToggleButton extends ToggleButton { //Class which adds distinction to the buttons in the app.
+    private final ButtonType type;
 
     public EspecifiedToggleButton(String name, ButtonType type) {
         super(name);
