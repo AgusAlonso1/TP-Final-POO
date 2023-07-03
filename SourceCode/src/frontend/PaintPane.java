@@ -7,7 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -20,12 +20,12 @@ public class PaintPane extends BorderPane {
 	// Canvas y relacionados
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
-	private Color lineColor = Color.BLACK;
-	private Color fillColor = Color.YELLOW;
+	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
+	private static final Color DEFAULT_FILL_COLOUR = Color.YELLOW;
 
 	//Default value of line width
 	private static final double LINE_WIDTH = 1.0;
-	private Format currentFormat= new Format(lineColor.toString(), fillColor.toString(), LINE_WIDTH );
+	private Format currentFormat= new Format(DEFAULT_LINE_COLOUR.toString(), DEFAULT_FILL_COLOUR.toString(), LINE_WIDTH );
 
 	// Botones Barra Izquierda
 	private final EspecifiedToggleButton selectionButton = new EspecifiedToggleButton("Seleccionar", ButtonType.MISC);
@@ -34,6 +34,16 @@ public class PaintPane extends BorderPane {
 	private final EspecifiedToggleButton squareButton = new EspecifiedToggleButton("Cuadrado", ButtonType.SQUARE);
 	private final EspecifiedToggleButton ellipseButton = new EspecifiedToggleButton("Elipse", ButtonType.ELLIPSE);
 	private final EspecifiedToggleButton deleteButton = new EspecifiedToggleButton("Borrar", ButtonType.MISC);
+	//botones, sliders y labels para el punto 1
+	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
+	private final Label outline = new Label("Borde");
+	private final static double MIN_OUTLINE_WIDTH = 1.0;
+	private final static double MAX_OUTLINE_WIDTH = 50.0;
+	private final static double DEFAULT_OUTLINE_WIDTH = 25.0;
+	private final Slider outlineSlider = new Slider(MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, DEFAULT_OUTLINE_WIDTH);
+	private final ColorPicker outlinePicker = new ColorPicker(DEFAULT_LINE_COLOUR);
+	private final Label fill = new Label("Relleno");
+	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
 	// Dibujar una figura
 	private Point startPoint;
@@ -56,8 +66,15 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
+		buttonsBox.getChildren().add(copyFormatButton);
+		buttonsBox.getChildren().add(outline);
+		buttonsBox.getChildren().add(outlineSlider);
+		buttonsBox.getChildren().add(outlinePicker);
+		buttonsBox.getChildren().add(fill);
+		buttonsBox.getChildren().add(fillPicker);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -71,6 +88,7 @@ public class PaintPane extends BorderPane {
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
 
+
 		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY())); //Selection of Point to draw.
 
 		//Shape drawing logic.
@@ -79,9 +97,12 @@ public class PaintPane extends BorderPane {
 			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) { //Ver
 				return;
 			}
+			currentFormat.setLineWidth(outlineSlider.getValue());
+			currentFormat.setLineColor(outlinePicker.getValue().toString());
+			currentFormat.setFillColor(fillPicker.getValue().toString());
 			FormatFigure newFigure = null;
 			if (currentButton.isAFigureButton()) {
-				newFigure = currentButton.getFigure(currentFormat, startPoint,endPoint);
+				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc),currentFormat, startPoint,endPoint);
 			} else {
 				return;
 			}

@@ -4,8 +4,8 @@ public class Rectangle extends FormatFigure{
 
     private final Point topLeft, bottomRight;
 
-    public Rectangle(Format format, Point topLeft, Point bottomRight) {
-        super(format);
+    public Rectangle(FigureDrawer fg, Format format, Point topLeft, Point bottomRight) {
+        super(fg, format);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }

@@ -2,12 +2,12 @@ package backend.model;
 
 public class Square extends Rectangle {
 
-    public Square(Format format, Point topLeft, double size) {
-        super(format, topLeft,new Point(topLeft.getX() + size, topLeft.getY() + size));
+    public Square(FigureDrawer fg, Format format, Point topLeft, double size) {
+        super(fg, format, topLeft,new Point(topLeft.getX() + size, topLeft.getY() + size));
     }
 
-    public Square(Format format, Point startPoint, Point endPoint){
-        this(format, startPoint, Math.abs(endPoint.getX() - startPoint.getX()));
+    public Square(FigureDrawer fg, Format format, Point startPoint, Point endPoint){
+        this(fg,format, startPoint, Math.abs(endPoint.getX() - startPoint.getX()));
     }
 
     @Override

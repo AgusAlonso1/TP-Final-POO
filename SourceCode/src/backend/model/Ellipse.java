@@ -6,15 +6,15 @@ public class Ellipse extends FormatFigure {
     protected final double sMayorAxis, sMinorAxis;
 
     //sMayorAxis and sMinorAxis are the diameters.
-    public Ellipse(Format format, Point centerPoint, double sMayorAxis, double sMinorAxis) {
-        super(format);
+    public Ellipse(FigureDrawer fg, Format format, Point centerPoint, double sMayorAxis, double sMinorAxis) {
+        super(fg, format);
         this.centerPoint = centerPoint;
         this.sMayorAxis = sMayorAxis;
         this.sMinorAxis = sMinorAxis;
     }
 
-    public Ellipse(Format format, Point startPoint,Point endPoint) {
-        this(format, new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
+    public Ellipse(FigureDrawer fg, Format format, Point startPoint,Point endPoint) {
+        this(fg, format, new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
     }
 
     @Override
@@ -47,6 +47,10 @@ public class Ellipse extends FormatFigure {
 
     public Point getTopLeftBound(){
         return new Point(centerPoint.getX() - (sMayorAxis / 2),centerPoint.getY() - (sMinorAxis / 2));
+    }
+    @Override
+    public void drawFigure() {
+        getFigureDrawer().drawEllipse(, );
     }
 
 }
