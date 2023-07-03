@@ -5,6 +5,7 @@ public class Ellipse implements Figure {
     protected final Point centerPoint;
     protected final double sMayorAxis, sMinorAxis;
 
+    //sMayorAxis and sMinorAxis are the diameters.
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         this.centerPoint = centerPoint;
         this.sMayorAxis = sMayorAxis;
@@ -41,6 +42,10 @@ public class Ellipse implements Figure {
     public void moveFigure(double diffX, double diffY){
         centerPoint.x += diffX;
         centerPoint.y += diffY;
+    }
+
+    public Point getTopLeftBound(){
+        return new Point(centerPoint.getX() - (sMayorAxis / 2),centerPoint.getY() - (sMinorAxis / 2));
     }
 
 }

@@ -21,8 +21,5 @@ public class CanvasState {
         return new ArrayList<>(list);
     }
 
-    public void selectFigure(Figure figure){
-
-    }
 
 }

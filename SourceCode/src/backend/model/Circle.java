@@ -2,7 +2,7 @@ package backend.model;
 
 public class Circle extends Ellipse {
     public Circle(Point centerPoint, double radius) {
-        super(centerPoint, radius, radius);
+        super(centerPoint, radius*2, radius*2);
     }
 
     public Circle(Point startPoint, Point endPoint){
@@ -15,7 +15,11 @@ public class Circle extends Ellipse {
     }
 
     public double getRadius() {
-        return getsMayorAxis(); //Aunque ya herede dicho metodo lo implementamos para tener un nombre mas significativo.
+        return getsMayorAxis()/2;
+    }
+
+    public double getDiameter(){
+        return getRadius() * 2;
     }
 
 }

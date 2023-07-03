@@ -35,4 +35,12 @@ public class Rectangle implements Figure {
         bottomRight.y += diffY;
     }
 
+    public double getHeight(){
+        return Math.abs(topLeft.getY() - bottomRight.getY());
+    }
+
+    public double getWidth(){
+        return Math.abs(topLeft.getX() - bottomRight.getX());
+    }
+
 }

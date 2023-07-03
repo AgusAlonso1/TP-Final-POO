@@ -2,7 +2,6 @@ package frontend;
 
 import backend.ButtonType;
 import backend.CanvasState;
-import backend.EspecifiedToggleButton;
 import backend.model.*;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -84,7 +83,7 @@ public class PaintPane extends BorderPane {
 			}
 			canvasState.addFigure(newFigure);
 			startPoint = null;
-			redrawCanvas();
+			redrawCanvas(); //draws the figure.
 		});
 
 		// Label updater logic with movement of the mouse.
@@ -155,7 +154,7 @@ public class PaintPane extends BorderPane {
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState.figures()) {
-			if(figure == selectedFigure) {
+			if(figure == selectedFigure) { //Looks for the figure that is selected.
 				gc.setStroke(Color.RED);
 			} else {
 				gc.setStroke(lineColor); //negro

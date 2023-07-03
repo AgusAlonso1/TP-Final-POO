@@ -1,5 +1,6 @@
-package backend;
+package frontend;
 
+import backend.ButtonType;
 import backend.model.Point;
 import backend.model.Figure;
 import javafx.scene.control.ToggleButton;
