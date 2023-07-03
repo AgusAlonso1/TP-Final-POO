@@ -13,7 +13,7 @@ public class Ellipse implements Figure {
     }
 
     public Ellipse(Point startPoint,Point endPoint) {
-        this(new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2)),Math.abs(endPoint.x - startPoint.x), Math.abs(endPoint.y - startPoint.y));
+        this(new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
     }
 
     @Override
@@ -40,8 +40,8 @@ public class Ellipse implements Figure {
 
     @Override
     public void moveFigure(double diffX, double diffY){
-        centerPoint.x += diffX;
-        centerPoint.y += diffY;
+        centerPoint.setX(centerPoint.getX() + diffX);
+        centerPoint.setY(centerPoint.getY() + diffY);
     }
 
     public Point getTopLeftBound(){

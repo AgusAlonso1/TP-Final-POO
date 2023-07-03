@@ -3,6 +3,8 @@ package frontend;
 import backend.ButtonType;
 import backend.CanvasState;
 import backend.model.*;
+import frontend.DrawFigures.DrawFigure;
+import frontend.DrawFigures.DrawingState;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -160,6 +162,7 @@ public class PaintPane extends BorderPane {
 				gc.setStroke(lineColor); //negro
 			}
 			gc.setFill(fillColor); //amarillo
+
 			if(figure instanceof Rectangle) { //dibuja rectangle
 				Rectangle rectangle = (Rectangle) figure;
 				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
