@@ -3,8 +3,6 @@ package frontend;
 import backend.ButtonType;
 import backend.CanvasState;
 import backend.model.*;
-import frontend.DrawFigures.DrawFigure;
-import frontend.DrawFigures.DrawingState;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
