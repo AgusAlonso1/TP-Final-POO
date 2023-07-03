@@ -23,6 +23,10 @@ public class PaintPane extends BorderPane {
 	private Color lineColor = Color.BLACK;
 	private Color fillColor = Color.YELLOW;
 
+	//Default value of line width
+	private static final double LINE_WIDTH = 1.0;
+	private Format currentFormat= new Format(lineColor.toString(), fillColor.toString(), LINE_WIDTH );
+
 	// Botones Barra Izquierda
 	private final EspecifiedToggleButton selectionButton = new EspecifiedToggleButton("Seleccionar", ButtonType.MISC);
 	private final EspecifiedToggleButton rectangleButton = new EspecifiedToggleButton("Rectángulo", ButtonType.RECTANGLE);
@@ -75,9 +79,9 @@ public class PaintPane extends BorderPane {
 			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) { //Ver
 				return;
 			}
-			Figure newFigure = null;
+			FormatFigure newFigure = null;
 			if (currentButton.isAFigureButton()) {
-				newFigure = currentButton.getFigure(startPoint,endPoint);
+				newFigure = currentButton.getFigure(currentFormat, startPoint,endPoint);
 			} else {
 				return;
 			}

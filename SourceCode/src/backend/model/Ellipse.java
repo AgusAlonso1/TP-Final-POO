@@ -1,19 +1,20 @@
 package backend.model;
 
-public class Ellipse implements Figure {
+public class Ellipse extends FormatFigure {
 
     protected final Point centerPoint;
     protected final double sMayorAxis, sMinorAxis;
 
     //sMayorAxis and sMinorAxis are the diameters.
-    public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
+    public Ellipse(Format format, Point centerPoint, double sMayorAxis, double sMinorAxis) {
+        super(format);
         this.centerPoint = centerPoint;
         this.sMayorAxis = sMayorAxis;
         this.sMinorAxis = sMinorAxis;
     }
 
-    public Ellipse(Point startPoint,Point endPoint) {
-        this(new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
+    public Ellipse(Format format, Point startPoint,Point endPoint) {
+        this(format, new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
     }
 
     @Override

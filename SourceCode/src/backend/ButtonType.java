@@ -5,36 +5,36 @@ import backend.model.*;
 public enum ButtonType { //Enun to diferentiate button types.
     RECTANGLE {
         @Override
-        public Figure buildFigure(Point firstPoint, Point secondPoint) {
-            return new Rectangle(firstPoint,secondPoint);
+        public FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint) {
+            return new Rectangle(format,firstPoint,secondPoint);
         }
     },
     SQUARE {
         @Override
-        public Figure buildFigure(Point firstPoint, Point secondPoint) {
-            return new Square(firstPoint,secondPoint);
+        public FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint) {
+            return new Square(format, firstPoint, secondPoint);
         }
     },
     ELLIPSE {
         @Override
-        public Figure buildFigure(Point firstPoint, Point secondPoint) {
-            return new Ellipse(firstPoint,secondPoint);
+        public FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint) {
+            return new Ellipse(format, firstPoint,secondPoint);
         }
     },
     CIRCLE {
         @Override
-        public Figure buildFigure(Point firstPoint, Point secondPoint) {
-            return new Circle(firstPoint,secondPoint);
+        public FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint) {
+            return new Circle(format, firstPoint,secondPoint);
         }
     },
     MISC {
         @Override
-        public Figure buildFigure(Point firstPoint, Point secondPoint) {
+        public FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint) {
             return null;
         }
     };
 
-    public abstract Figure buildFigure(Point firstPoint, Point secondPoint);
+    public abstract FormatFigure buildFigure(Format format, Point firstPoint, Point secondPoint);
 
     public boolean isAFigureType() {
         return this != MISC;

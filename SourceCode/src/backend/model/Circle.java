@@ -1,12 +1,12 @@
 package backend.model;
 
 public class Circle extends Ellipse {
-    public Circle(Point centerPoint, double radius) {
-        super(centerPoint, radius*2, radius*2);
+    public Circle(Format format, Point centerPoint, double radius) {
+        super(format, centerPoint, radius*2, radius*2);
     }
 
-    public Circle(Point startPoint, Point endPoint){
-        this(startPoint,Math.abs(endPoint.getX() - startPoint.getX()));
+    public Circle(Format format, Point startPoint, Point endPoint){
+        this(format, startPoint,Math.abs(endPoint.getX() - startPoint.getX()));
     }
 
     @Override

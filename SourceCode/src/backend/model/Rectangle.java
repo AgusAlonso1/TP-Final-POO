@@ -1,10 +1,11 @@
 package backend.model;
 
-public class Rectangle implements Figure {
+public class Rectangle extends FormatFigure{
 
     private final Point topLeft, bottomRight;
 
-    public Rectangle(Point topLeft, Point bottomRight) {
+    public Rectangle(Format format, Point topLeft, Point bottomRight) {
+        super(format);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }

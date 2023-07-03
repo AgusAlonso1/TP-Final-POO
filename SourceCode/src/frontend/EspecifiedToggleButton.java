@@ -1,8 +1,9 @@
 package frontend;
 
 import backend.ButtonType;
+import backend.model.Format;
+import backend.model.FormatFigure;
 import backend.model.Point;
-import backend.model.Figure;
 import javafx.scene.control.ToggleButton;
 
 public class EspecifiedToggleButton extends ToggleButton { //Class which adds distinction to the buttons in the app.
@@ -13,11 +14,11 @@ public class EspecifiedToggleButton extends ToggleButton { //Class which adds di
         this.type = type;
     }
 
-    public Figure getFigure(Point firstPoint, Point secondPoint) {
+    public FormatFigure getFigure(Format format, Point firstPoint, Point secondPoint) {
         if (!type.isAFigureType()) {
             throw new IllegalArgumentException("Button type cannot create a figure.");
         }
-        return type.buildFigure(firstPoint,secondPoint);
+        return type.buildFigure(format, firstPoint,secondPoint);
     }
 
     public boolean isAFigureButton() {
