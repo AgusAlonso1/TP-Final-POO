@@ -6,15 +6,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
 public class LayerSelector extends HBox {
-    private final CheckBox layer1, layer2, layer3;
-    private final Label label;
     public LayerSelector() {
         setStyle("-fx-background-color: #999");
-        this.label = new Label("Mostrar Capas: ");
-        this.layer1 = new CheckBox("Layer 1");
-        this.layer2 = new CheckBox("Layer 2");
-        this.layer3 = new CheckBox("Layer 3");
-        this.getChildren().addAll(label,layer1,layer2,layer3);
+        CheckBox layer1 = new CheckBox("Layer 1 ");
+        CheckBox layer2 = new CheckBox("Layer 2 ");
+        CheckBox layer3 = new CheckBox("Layer 3 ");
+        getChildren().addAll(new Label("Mostra Capas: "), layer1, layer2, layer3);
         this.setAlignment(Pos.CENTER);
+
     }
 }

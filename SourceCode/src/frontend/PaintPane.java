@@ -3,6 +3,7 @@ package frontend;
 import backend.ButtonType;
 import backend.CanvasState;
 import backend.model.*;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -12,6 +13,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
+import java.lang.reflect.Array;
 
 public class PaintPane extends BorderPane {
 
@@ -51,6 +54,9 @@ public class PaintPane extends BorderPane {
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
 
+	private final ChoiceBox<Layer> layerChoiceBox = new ChoiceBox<>();
+	private Integer choiceBoxSelection;
+
 	// Start point for a figure to draw.
 	private Point startPoint;
 
@@ -78,6 +84,14 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+		//MODIFICAR ESTO
+		String st[] = {"Layer 1 ", "Layer 2", "Layer 3"};
+		ChoiceBox<String> box = new ChoiceBox<>(FXCollections.observableArrayList(st));
+		//loop that assigns the choice box options
+		for(int i = 1; i <= 3; i++) {
+			layerChoiceBox.getItems().add(new Layer(i));
+		}
+
 		//Personalize Copy Format Button.
 		copyFormatButton.setMinWidth(90);
 		copyFormatButton.setCursor(Cursor.HAND);
@@ -90,7 +104,7 @@ public class PaintPane extends BorderPane {
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker);
+		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, box, layerChoiceBox);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -103,6 +117,12 @@ public class PaintPane extends BorderPane {
 		circleButton.setOnAction(event -> currentButton = circleButton);
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
+
+		layerChoiceBox.setOnAction(event -> {
+			choiceBoxSelection = layerChoiceBox.getValue().getLayerNum();
+			System.out.println(choiceBoxSelection);
+		});
+
 
 		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format
 		copyFormatButton.setOnAction(event -> {
