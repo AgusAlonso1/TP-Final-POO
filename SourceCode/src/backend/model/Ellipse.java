@@ -25,11 +25,11 @@ public class Ellipse extends FormatFigure {
     public Point getCenterPoint() {
         return centerPoint;
     }
-
+    //X coordinate
     public double getsMayorAxis() {
         return sMayorAxis;
     }
-
+//Y coordinate
     public double getsMinorAxis() {
         return sMinorAxis;
     }
@@ -50,7 +50,7 @@ public class Ellipse extends FormatFigure {
     }
     @Override
     public void drawFigure() {
-        getFigureDrawer().drawEllipse(, );
+        getFigureDrawer().drawEllipse(getFormat(), getTopLeftBound().getX(), getTopLeftBound().getY(), getsMayorAxis(), getsMinorAxis());
     }
 
 }

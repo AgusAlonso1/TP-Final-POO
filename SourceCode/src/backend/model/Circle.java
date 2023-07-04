@@ -21,5 +21,9 @@ public class Circle extends Ellipse {
     public double getDiameter(){
         return getRadius() * 2;
     }
+    @Override
+    public void drawFigure() {
+        getFigureDrawer().drawCircle(getFormat(), getTopLeftBound().getX(), getTopLeftBound().getY(), getDiameter());
+    }
 
 }

@@ -43,5 +43,9 @@ public class Rectangle extends FormatFigure{
     public double getWidth(){
         return Math.abs(topLeft.getX() - bottomRight.getX());
     }
+    @Override
+    public void drawFigure() {
+        getFigureDrawer().drawRectangle(getFormat(), topLeft.getX(), topLeft.getY(), getWidth(), getHeight());
+    }
 
 }

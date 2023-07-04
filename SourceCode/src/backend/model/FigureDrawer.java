@@ -1,8 +1,8 @@
 package backend.model;
 
 public interface FigureDrawer {
-    void drawRectangle(double xUpperLeftBound, double yUpperLeftBound, double width, double height);
-    void drawEllipse(double xUpperLeftBound, double yUpperLeftBound, double width, double height);
-    void drawCircle(double xUpperLeftBound, double yUpperLeftBound,double diameter);
-    void drawSquare(double xUpperLeftBound, double yUpperLeftBound, double height);
+    void drawRectangle(Format format, double xUpperLeftBound, double yUpperLeftBound, double width, double height);
+    void drawEllipse(Format format, double xUpperLeftBound, double yUpperLeftBound, double width, double height);
+    void drawCircle(Format format, double xUpperLeftBound, double yUpperLeftBound,double diameter);
+    void drawSquare(Format format, double xUpperLeftBound, double yUpperLeftBound, double height);
 }
