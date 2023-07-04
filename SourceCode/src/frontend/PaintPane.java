@@ -117,7 +117,7 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState.figures()) {
+			for(FormatFigure figure : canvasState.figures()) {
 				if(figureBelongs(figure, eventPoint)) {
 					found = true;
 					label.append(figure);
@@ -186,7 +186,7 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
-	private boolean figureBelongs(Figure figure, Point eventPoint) {
+	private boolean figureBelongs(FormatFigure figure, Point eventPoint) {
 		return figure.pointIsIn(eventPoint);
 	}
 
