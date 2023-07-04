@@ -58,6 +58,8 @@ public class PaintPane extends BorderPane {
 	// StatusBar.
 	private StatusPane statusPane;
 
+	private Format copiedFormat = null;
+
 	//Current toggled button, default is set to the selection button.
 	private EspecifiedToggleButton currentButton = selectionButton;
 
@@ -96,6 +98,16 @@ public class PaintPane extends BorderPane {
 		circleButton.setOnAction(event -> currentButton = circleButton);
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
+
+		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format
+		copyFormatButton.setOnAction(event -> {
+			if(selectedFigure == null) {
+				statusPane.updateStatus("Ninguna figura seleccionada");
+			}
+			else {
+				copiedFormat = selectedFigure.getFormat();
+			}
+		});
 
 		//Selection of Point to draw.
 		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
@@ -142,6 +154,7 @@ public class PaintPane extends BorderPane {
 					statusPane.updateStatus("Ninguna figura encontrada");
 				}
 				else{
+					applyFormat(selectedFigure);
 					statusPane.updateStatus("Se seleccionó: %s".formatted(selectedFigure)); //Modifies message on the bottom of the app
 				}
 				redrawCanvas();
@@ -150,7 +163,7 @@ public class PaintPane extends BorderPane {
 
 		//Move shape logic
 		canvas.setOnMouseDragged(event -> {
-			if(selectionButton.isSelected()) {
+			if(selectionButton.isSelected() && selectedFigure != null) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
@@ -190,5 +203,12 @@ public class PaintPane extends BorderPane {
 			}
 		}
 		return figureToReturn;
+	}
+	private void applyFormat(FormatFigure figure) {
+		if(copiedFormat == null) {
+			return;
+		}
+		figure.setFormat(copiedFormat);
+		copiedFormat = null;
 	}
 }

@@ -21,8 +21,11 @@ public abstract class FormatFigure {
     protected FigureDrawer getFigureDrawer() {
         return fg;
     }
-    protected Format getFormat() {
+    public Format getFormat() {
         return format;
+    }
+    public void setFormat(Format format) {
+        this.format = format;
     }
 
 
