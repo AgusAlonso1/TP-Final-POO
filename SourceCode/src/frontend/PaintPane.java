@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -65,6 +66,9 @@ public class PaintPane extends BorderPane {
 	private EspecifiedToggleButton currentButton = selectionButton;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+		VBox canvasAndLayers = new VBox();
+		canvasAndLayers.getChildren().addAll(canvas,new LayerSelector());
+
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
@@ -182,7 +186,7 @@ public class PaintPane extends BorderPane {
 		});
 
 		setLeft(buttonsBox);
-		setRight(canvas);
+		setRight(canvasAndLayers);
 	}
 
 	// Draws the shapes
