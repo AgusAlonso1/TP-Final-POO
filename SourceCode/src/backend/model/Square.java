@@ -15,8 +15,8 @@ public class Square extends Rectangle {
         return String.format("Cuadrado [ %s , %s ]", getTopLeft(), getBottomRight());
     }
     @Override
-    public void drawFigure() {
-        getFigureDrawer().drawSquare(getFormat(), getTopLeft().getX(), getTopLeft().getY(), getHeight());
+    public void drawFigureWithFormat(Format format) {
+        getFigureDrawer().drawSquare(format, getTopLeft().getX(), getTopLeft().getY(), getHeight());
     }
 
 }

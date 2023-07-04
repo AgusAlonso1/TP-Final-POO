@@ -49,8 +49,12 @@ public class Ellipse extends FormatFigure {
         return new Point(centerPoint.getX() - (sMayorAxis / 2),centerPoint.getY() - (sMinorAxis / 2));
     }
     @Override
-    public void drawFigure() {
-        getFigureDrawer().drawEllipse(getFormat(), getTopLeftBound().getX(), getTopLeftBound().getY(), getsMayorAxis(), getsMinorAxis());
+    public void drawFigureWithFormat(Format format) {
+        getFigureDrawer().drawEllipse(format, getTopLeftBound().getX(), getTopLeftBound().getY(), getsMayorAxis(), getsMinorAxis());
+    }
+    @Override
+    public boolean equals(Object other){
+        return this == other || (other instanceof Ellipse e && e.centerPoint.equals(centerPoint) && e.sMayorAxis == sMayorAxis && e.sMinorAxis == sMinorAxis && e.getFormat().equals(getFormat()));
     }
 
 }

@@ -24,6 +24,7 @@ public class PaintPane extends BorderPane {
 	// Default value of fill color, line color and line width.
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
 	private static final Color DEFAULT_FILL_COLOUR = Color.YELLOW;
+	private static final String SELECTED_LINE_COLOR_HX = Color.RED.toString();
 	private static final double LINE_WIDTH = 1.0;
 
 	// Current format of shapes to draw.
@@ -70,6 +71,15 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
+		//Personalize Copy Format Button.
+		copyFormatButton.setMinWidth(90);
+		copyFormatButton.setCursor(Cursor.HAND);
+
+		//Personalize Line Width Button.
+		outlineSlider.setShowTickMarks(true);
+		outlineSlider.setShowTickLabels(true);
+		outlineSlider.setCursor(Cursor.HAND);
+
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
@@ -115,18 +125,11 @@ public class PaintPane extends BorderPane {
 		//Label updater logic with movement of the mouse.
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
-			boolean found = false;
-			StringBuilder label = new StringBuilder();
-			for(FormatFigure figure : canvasState.figures()) {
-				if(figureBelongs(figure, eventPoint)) {
-					found = true;
-					label.append(figure);
-				}
-			}
-			if(found){
-				statusPane.updateStatus(label.toString()); //Modifies message on the bottom of the app
-			} else {
+			FormatFigure mouse = findSelectedFigure(eventPoint);
+			if(mouse == null){
 				statusPane.updateStatus(eventPoint.toString());
+			} else {
+				statusPane.updateStatus(mouse.toString());//Modifies message on the bottom of the app
 			}
 		});
 
@@ -134,22 +137,12 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMouseClicked(event -> {
 			if(selectionButton.isSelected()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
-				boolean found = false;
-				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (FormatFigure figure : canvasState.figures()) {
-					if(figureBelongs(figure, eventPoint)) {
-						found = true;
-						selectedFigure = figure;
-						selectedFigure.select();
-						label.append(figure);
-					}
-				}
-				if (found) {
-					statusPane.updateStatus(label.toString()); //Modifies message on the bottom of the app
-				} else {
-					selectedFigure.deselect();
-					selectedFigure = null;
+				selectedFigure = findSelectedFigure(eventPoint);
+				if(selectedFigure == null){
 					statusPane.updateStatus("Ninguna figura encontrada");
+				}
+				else{
+					statusPane.updateStatus("Se seleccionó: %s".formatted(selectedFigure)); //Modifies message on the bottom of the app
 				}
 				redrawCanvas();
 			}
@@ -181,26 +174,21 @@ public class PaintPane extends BorderPane {
 	// Draws the shapes
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(FormatFigure figure : canvasState.figures()) {
-			figure.drawFigure();
+		for (FormatFigure figure : canvasState.figures()) {
+			if (selectedFigure == figure) {
+				figure.drawFigure(SELECTED_LINE_COLOR_HX);
+			} else {
+				figure.drawFigure();
+			}
 		}
 	}
-
-	private boolean figureBelongs(FormatFigure figure, Point eventPoint) {
-		return figure.pointIsIn(eventPoint);
+	private FormatFigure findSelectedFigure(Point eventPoint){
+		FormatFigure figureToReturn = null;
+		for(FormatFigure figure : canvasState.figures()) {
+			if(figure.pointIsIn(eventPoint)) {
+				figureToReturn=figure;
+			}
+		}
+		return figureToReturn;
 	}
-
-//	private boolean findFigure(Point eventPoint) {
-//		for (FormatFigure currentFigure : canvasState.figures()) {
-//			if (figureBelongs(currentFigure,eventPoint)) {
-//				if (selectedFigure != null) {
-//					selectedFigure.deselect();
-//				}
-//				selectedFigure = currentFigure;
-//				return  true;
-//			}
-//		}
-//		return false;
-//	}
-
 }

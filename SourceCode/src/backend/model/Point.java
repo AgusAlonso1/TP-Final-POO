@@ -30,4 +30,9 @@ public class Point {
         return String.format("{%.2f , %.2f}", x, y);
     }
 
+    @Override
+    public boolean equals(Object other){
+        return other == this || (other instanceof Point p && p.y == y && p.x == x);
+    }
+
 }

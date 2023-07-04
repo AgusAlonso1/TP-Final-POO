@@ -34,4 +34,9 @@ public class Format {
     public void setLineWidth(double lineWidth) {
         this.lineWidth = lineWidth;
     }
+
+    @Override
+    public boolean equals(Object other){
+        return other == this || (other instanceof Format f && f.fillColor.equals(fillColor) && f.lineColor.equals(lineColor) && f.lineWidth == lineWidth);
+    }
 }

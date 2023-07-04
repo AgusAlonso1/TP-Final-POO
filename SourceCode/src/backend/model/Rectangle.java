@@ -44,8 +44,12 @@ public class Rectangle extends FormatFigure{
         return Math.abs(topLeft.getX() - bottomRight.getX());
     }
     @Override
-    public void drawFigure() {
-        getFigureDrawer().drawRectangle(getFormat(), topLeft.getX(), topLeft.getY(), getWidth(), getHeight());
+    public void drawFigureWithFormat(Format format) {
+        getFigureDrawer().drawRectangle(format, topLeft.getX(), topLeft.getY(), getWidth(), getHeight());
+    }
+    @Override
+    public boolean equals(Object other){
+        return this == other || (other instanceof Rectangle r && r.bottomRight.equals(bottomRight) && r.topLeft.equals(topLeft) && r.getFormat().equals(this.getFormat()));
     }
 
 }
