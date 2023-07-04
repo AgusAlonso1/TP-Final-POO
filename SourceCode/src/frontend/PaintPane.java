@@ -49,6 +49,7 @@ public class PaintPane extends BorderPane {
 	private final Label fill = new Label("Relleno");
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
+
 	// Start point for a figure to draw.
 	private Point startPoint;
 

@@ -7,7 +7,8 @@ public class MainFrame extends VBox {
 
     public MainFrame(CanvasState canvasState) {
         StatusPane statusPane = new StatusPane();
-        getChildren().addAll(new AppMenuBar(), new PaintPane(canvasState, statusPane),statusPane);
+        LayerSelector layerSelector = new LayerSelector();
+        getChildren().addAll(new AppMenuBar(), new PaintPane(canvasState, statusPane), layerSelector,statusPane);
     }
 
 }
