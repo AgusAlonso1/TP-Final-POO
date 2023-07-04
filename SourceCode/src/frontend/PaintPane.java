@@ -14,27 +14,30 @@ import javafx.scene.paint.Color;
 
 public class PaintPane extends BorderPane {
 
-	// BackEnd
+	// BackEnd CanvasState.
 	private CanvasState canvasState;
 
-	// Canvas y relacionados
+	// Canvas and related.
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
+
+	// Default value of fill color, line color and line width.
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
 	private static final Color DEFAULT_FILL_COLOUR = Color.YELLOW;
-
-	//Default value of line width
 	private static final double LINE_WIDTH = 1.0;
-	private Format currentFormat= new Format(DEFAULT_LINE_COLOUR.toString(), DEFAULT_FILL_COLOUR.toString(), LINE_WIDTH );
 
-	// Botones Barra Izquierda
+	// Current format of shapes to draw.
+	private Format currentFormat = new Format(DEFAULT_LINE_COLOUR.toString(), DEFAULT_FILL_COLOUR.toString(), LINE_WIDTH );
+
+	// Side Menu Toggle Buttons.
 	private final EspecifiedToggleButton selectionButton = new EspecifiedToggleButton("Seleccionar", ButtonType.MISC);
 	private final EspecifiedToggleButton rectangleButton = new EspecifiedToggleButton("Rectángulo", ButtonType.RECTANGLE);
 	private final EspecifiedToggleButton circleButton = new EspecifiedToggleButton("Círculo", ButtonType.CIRCLE);
 	private final EspecifiedToggleButton squareButton = new EspecifiedToggleButton("Cuadrado", ButtonType.SQUARE);
 	private final EspecifiedToggleButton ellipseButton = new EspecifiedToggleButton("Elipse", ButtonType.ELLIPSE);
 	private final EspecifiedToggleButton deleteButton = new EspecifiedToggleButton("Borrar", ButtonType.MISC);
-	//botones, sliders y labels para el punto 1
+
+	//Buttons and sliders for assignment.
 	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
 	private final Label outline = new Label("Borde");
 	private final static double MIN_OUTLINE_WIDTH = 1.0;
@@ -45,36 +48,32 @@ public class PaintPane extends BorderPane {
 	private final Label fill = new Label("Relleno");
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
-	// Dibujar una figura
+	// Start point for a figure to draw.
 	private Point startPoint;
 
-	// Seleccionar una figura
-	private Figure selectedFigure;
+	// Selected figure.
+	private FormatFigure selectedFigure;
 
-	// StatusBar
+	// StatusBar.
 	private StatusPane statusPane;
 
-	private EspecifiedToggleButton currentButton = selectionButton; //Default button is the selection button.
+	//Current toggled button, default is set to the selection button.
+	private EspecifiedToggleButton currentButton = selectionButton;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
-		for (EspecifiedToggleButton tool : toolsArr) {
+		for (EspecifiedToggleButton tool : toolsArr) { //Created Toggle group for the shapes, delete and selection buttons.
 			tool.setMinWidth(90);
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
-
+		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().add(copyFormatButton);
-		buttonsBox.getChildren().add(outline);
-		buttonsBox.getChildren().add(outlineSlider);
-		buttonsBox.getChildren().add(outlinePicker);
-		buttonsBox.getChildren().add(fill);
-		buttonsBox.getChildren().add(fillPicker);
+		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -88,8 +87,8 @@ public class PaintPane extends BorderPane {
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
 
-
-		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY())); //Selection of Point to draw.
+		//Selection of Point to draw.
+		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
 
 		//Shape drawing logic.
 		canvas.setOnMouseReleased(event -> {
@@ -97,21 +96,23 @@ public class PaintPane extends BorderPane {
 			if(startPoint == null || endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) { //Ver
 				return;
 			}
+			//Change format field to the new specified format.
 			currentFormat.setLineWidth(outlineSlider.getValue());
 			currentFormat.setLineColor(outlinePicker.getValue().toString());
 			currentFormat.setFillColor(fillPicker.getValue().toString());
 			FormatFigure newFigure = null;
 			if (currentButton.isAFigureButton()) {
-				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc),currentFormat, startPoint,endPoint);
+				//Get the corresponding figure of the button toggled.
+				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc),new Format(currentFormat.getLineColor(),currentFormat.getFillColor(),currentFormat.getLineWidth()), startPoint, endPoint);
 			} else {
 				return;
 			}
-			canvasState.addFigure(newFigure);
-			startPoint = null;
-			redrawCanvas(); //draws the figure.
+			canvasState.addFigure(newFigure); //Added figure to the back-end trace of figures.
+			startPoint = null; //Reset the start point.
+			redrawCanvas(); //Redraw the canvas.
 		});
 
-		// Label updater logic with movement of the mouse.
+		//Label updater logic with movement of the mouse.
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
@@ -135,16 +136,18 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState.figures()) {
+				for (FormatFigure figure : canvasState.figures()) {
 					if(figureBelongs(figure, eventPoint)) {
 						found = true;
 						selectedFigure = figure;
+						selectedFigure.select();
 						label.append(figure);
 					}
 				}
 				if (found) {
 					statusPane.updateStatus(label.toString()); //Modifies message on the bottom of the app
 				} else {
+					selectedFigure.deselect();
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
 				}
@@ -178,41 +181,26 @@ public class PaintPane extends BorderPane {
 	// Draws the shapes
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(Figure figure : canvasState.figures()) {
-			if(figure == selectedFigure) { //Looks for the figure that is selected.
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(lineColor); //negro
-			}
-			gc.setFill(fillColor); //amarillo
-
-			if(figure instanceof Rectangle) { //dibuja rectangle
-				Rectangle rectangle = (Rectangle) figure;
-				gc.fillRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-				gc.strokeRect(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY(),
-						Math.abs(rectangle.getTopLeft().getX() - rectangle.getBottomRight().getX()), Math.abs(rectangle.getTopLeft().getY() - rectangle.getBottomRight().getY()));
-			} else if(figure instanceof Circle) {
-				Circle circle = (Circle) figure;
-				double diameter = circle.getRadius() * 2;
-				gc.fillOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-				gc.strokeOval(circle.getCenterPoint().getX() - circle.getRadius(), circle.getCenterPoint().getY() - circle.getRadius(), diameter, diameter);
-			} else if(figure instanceof Square) {
-				Square square = (Square) figure;
-				gc.fillRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-				gc.strokeRect(square.getTopLeft().getX(), square.getTopLeft().getY(),
-						Math.abs(square.getTopLeft().getX() - square.getBottomRight().getX()), Math.abs(square.getTopLeft().getY() - square.getBottomRight().getY()));
-			} else if(figure instanceof Ellipse) {
-				Ellipse ellipse = (Ellipse) figure;
-				gc.strokeOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-				gc.fillOval(ellipse.getCenterPoint().getX() - (ellipse.getsMayorAxis() / 2), ellipse.getCenterPoint().getY() - (ellipse.getsMinorAxis() / 2), ellipse.getsMayorAxis(), ellipse.getsMinorAxis());
-			}
+		for(FormatFigure figure : canvasState.figures()) {
+			figure.drawFigure();
 		}
 	}
 
 	private boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.pointIsIn(eventPoint);
 	}
+
+//	private boolean findFigure(Point eventPoint) {
+//		for (FormatFigure currentFigure : canvasState.figures()) {
+//			if (figureBelongs(currentFigure,eventPoint)) {
+//				if (selectedFigure != null) {
+//					selectedFigure.deselect();
+//				}
+//				selectedFigure = currentFigure;
+//				return  true;
+//			}
+//		}
+//		return false;
+//	}
 
 }

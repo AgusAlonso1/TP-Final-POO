@@ -1,24 +1,24 @@
 package backend;
 
-import backend.model.Figure;
+import backend.model.FormatFigure;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasState {
 
-    private final List<Figure> list = new ArrayList<>();
+    private final List<FormatFigure> list = new ArrayList<>();
 
-    public void addFigure(Figure figure) {
+    public void addFigure(FormatFigure figure) {
         list.add(figure);
     }
 
-    public void deleteFigure(Figure figure) {
+    public void deleteFigure(FormatFigure figure) {
         list.remove(figure);
     }
 
-    public Iterable<Figure> figures() {
-        return new ArrayList<>(list);
+    public Iterable<FormatFigure> figures() {
+        return list;
     }
 
 
