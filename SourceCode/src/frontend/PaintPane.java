@@ -130,6 +130,26 @@ public class PaintPane extends BorderPane {
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
 
+		//Figure format modifier
+		outlinePicker.setOnAction(event -> {
+			if(selectedFigure != null){
+				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
+				redrawCanvas();
+			}
+		});
+		fillPicker.setOnAction(event -> {
+			if(selectedFigure != null){
+				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
+			}
+		});
+		outlineSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+			if(selectedFigure != null) {
+				selectedFigure.getFormat().setLineWidth(new_val.doubleValue());
+				redrawCanvas();
+			}
+		});
+
+
 		//gets the layer user is working on.
 		layersChoiceBox.setOnAction(event -> {
 			String oldLayer = selectedLayer;
@@ -180,13 +200,11 @@ public class PaintPane extends BorderPane {
 			FormatFigure newFigure = null;
 			if (currentButton.isAFigureButton()) {
 				//Get the corresponding figure of the button toggled.
-				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc),new Format(currentFormat.getLineColor(),currentFormat.getFillColor(),currentFormat.getLineWidth()), startPoint, endPoint);
-			} else {
-				return;
+				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
+				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
+				startPoint = null; //Reset the start point.
+				redrawCanvas(); //Redraw the canvas.
 			}
-			canvasState.addFigure(newFigure,selectedLayer); //Added figure to the back-end trace of figures.
-			startPoint = null; //Reset the start point.
-			redrawCanvas(); //Redraw the canvas.
 		});
 
 		//Label updater logic with movement of the mouse.
@@ -265,5 +283,8 @@ public class PaintPane extends BorderPane {
 		}
 		figure.setFormat(copiedFormat);
 		copiedFormat = null;
+
+
 	}
+
 }
