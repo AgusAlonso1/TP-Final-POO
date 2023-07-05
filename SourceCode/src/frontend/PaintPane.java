@@ -13,6 +13,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PaintPane extends BorderPane {
 
 	// BackEnd CanvasState.
@@ -55,13 +58,13 @@ public class PaintPane extends BorderPane {
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
 	//Layers Choice Box
-	private String[] st = {"Layer 1 ", "Layer 2", "Layer 3"};
-	private ChoiceBox<String> box = new ChoiceBox<>(FXCollections.observableArrayList(st));
-
-	//private final ChoiceBox<Layer> layerChoiceBox = new ChoiceBox<>();
+	private final LayerSelector layerSelector = new LayerSelector();
+	private ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerSelector.layersName()));
 
 	//Layer in which user is working on
-	private String choiceBoxSelection;
+	private String selectedLayer;
+
+	private List<String> selectedLayers = new ArrayList<>();
 
 	// Start point for a figure to draw.
 	private Point startPoint;
@@ -93,11 +96,6 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 
-		/*/loop that assigns the choice box options
-		for(int i = 1; i <= 3; i++) {
-			layerChoiceBox.getItems().add(new Layer(i));
-		}*/
-
 		//Personalize Copy Format Button.
 		copyFormatButton.setMinWidth(90);
 		copyFormatButton.setCursor(Cursor.HAND);
@@ -108,13 +106,15 @@ public class PaintPane extends BorderPane {
 		outlineSlider.setCursor(Cursor.HAND);
 
 		//Personalize Layers choice box.
-		box.setMinWidth(90);
-		box.setCursor(Cursor.HAND);
+		layersChoiceBox.setMinWidth(90);
+		layersChoiceBox.setCursor(Cursor.HAND);
+		layersChoiceBox.setValue("Layer 1");
+		selectedLayer = layersChoiceBox.getValue();
 
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, box);
+		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -129,9 +129,21 @@ public class PaintPane extends BorderPane {
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
 
 		//gets the layer user is working on.
-		box.setOnAction(event -> {
-			choiceBoxSelection = box.getValue();
+		layersChoiceBox.setOnAction(event -> {
+			selectedLayer = layersChoiceBox.getValue();
 		});
+
+		for (CheckBox checkBox : layerSelector.getLayers()) {
+			checkBox.setOnAction(event -> {
+				if (checkBox.isSelected()) {
+					selectedLayers.add(checkBox.getText());
+					System.out.println(checkBox.getText());
+				} else  {
+					selectedLayers.remove(checkBox.getText());
+				}
+				redrawCanvas();
+			});
+		}
 
 
 		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format
@@ -164,7 +176,7 @@ public class PaintPane extends BorderPane {
 			} else {
 				return;
 			}
-			canvasState.addFigure(newFigure); //Added figure to the back-end trace of figures.
+			canvasState.addFigure(newFigure,selectedLayer); //Added figure to the back-end trace of figures.
 			startPoint = null; //Reset the start point.
 			redrawCanvas(); //Redraw the canvas.
 		});
@@ -209,7 +221,7 @@ public class PaintPane extends BorderPane {
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedFigure);
+				canvasState.deleteFigure(selectedFigure,selectedLayer);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -222,7 +234,7 @@ public class PaintPane extends BorderPane {
 	// Draws the shapes
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for (FormatFigure figure : canvasState.figures()) {
+		for (FormatFigure figure : canvasState.figures(selectedLayers)) {
 			if (selectedFigure == figure) {
 				figure.drawFigure(SELECTED_LINE_COLOR_HX);
 			} else {
@@ -232,7 +244,7 @@ public class PaintPane extends BorderPane {
 	}
 	private FormatFigure findSelectedFigure(Point eventPoint){
 		FormatFigure figureToReturn = null;
-		for(FormatFigure figure : canvasState.figures()) {
+		for(FormatFigure figure : canvasState.figures(selectedLayer)) {
 			if(figure.pointIsIn(eventPoint)) {
 				figureToReturn=figure;
 			}

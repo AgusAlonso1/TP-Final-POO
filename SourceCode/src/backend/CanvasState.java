@@ -2,47 +2,34 @@ package backend;
 
 import backend.model.FormatFigure;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CanvasState {
+    private final SortedMap<String, List<FormatFigure>> layersMap = new TreeMap<>();
 
-    //private final SortedMap<String, List<FormatFigure>> layerMap = new TreeMap<>();
-    private final List<FormatFigure> list = new ArrayList<>();
+    public void addFigure(FormatFigure figure, String layer){
+      layersMap.putIfAbsent(layer, new ArrayList<>());
+      layersMap.get(layer).add(figure);
+     }
 
-    public void addFigure(FormatFigure figure) {
-        list.add(figure);
+     public void deleteFigure(FormatFigure figure, String layer){
+          layersMap.get(layer).remove(figure);
+     }
+
+     //Returns the list of FormatFigures acording to the selected layers in the checkboxes.
+     public Iterable<FormatFigure> figures(List<String> selectedLayers) {
+         List<FormatFigure> toReturn = new ArrayList<>();
+         for (Map.Entry<String, List<FormatFigure>> entry : layersMap.entrySet()) {
+             if (selectedLayers.contains(entry.getKey())) {
+                 toReturn.addAll(entry.getValue());
+             }
+         }
+         return toReturn;
+     }
+
+    //Returns the list of FormatFigures in a specific layer.
+    public Iterable<FormatFigure> figures(String layer) {
+        return layersMap.getOrDefault(layer, new ArrayList<>());
     }
-    //public void addFigure(FormatFigure figure, string layer){
-    //  layerMap.putIfAbsent(layer, new ArrayList<>());
-    //  layerMap.get(layer).add(figure);
-    // }
-
-    public void deleteFigure(FormatFigure figure) {
-        list.remove(figure);
-    }
-
-    // public void deleteFigure(FormatFigure, String layer){
-    //      layerMap.get(layer).delete(figure);
-    // }
-    //
-
-    public Iterable<FormatFigure> figures() {
-        return list;
-    }
-
-    //public Iterable<FormatFigure> figures() {
-    //   List<FormatFigure> toReturn = new ArrayList<>();
-    //   for(MapEntry<String,List<FormatFigure>> entry : layersMap.entrySet()){
-    //      toReturn.addAll(entry.getValue());
-    //   }
-    //
-
-    //Returns the list of format figures in a layer
-    //public Iterable<FormatFigure> getLayerFigures(int layer) {
-    //    return layerMap.get(layer);
-    //}
 
 }
