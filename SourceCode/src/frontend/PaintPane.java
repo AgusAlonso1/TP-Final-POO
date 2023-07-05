@@ -10,11 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
-import java.lang.reflect.Array;
 
 public class PaintPane extends BorderPane {
 
@@ -45,17 +42,26 @@ public class PaintPane extends BorderPane {
 	//Buttons and sliders for assignment.
 	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
 	private final Label outline = new Label("Borde");
+
+	// Format constants
 	private final static double MIN_OUTLINE_WIDTH = 1.0;
 	private final static double MAX_OUTLINE_WIDTH = 50.0;
 	private final static double DEFAULT_OUTLINE_WIDTH = 25.0;
+
+	// Format Buttons
 	private final Slider outlineSlider = new Slider(MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, DEFAULT_OUTLINE_WIDTH);
 	private final ColorPicker outlinePicker = new ColorPicker(DEFAULT_LINE_COLOUR);
 	private final Label fill = new Label("Relleno");
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
+	//Layers Choice Box
+	private String[] st = {"Layer 1 ", "Layer 2", "Layer 3"};
+	private ChoiceBox<String> box = new ChoiceBox<>(FXCollections.observableArrayList(st));
 
-	private final ChoiceBox<Layer> layerChoiceBox = new ChoiceBox<>();
-	private Integer choiceBoxSelection;
+	//private final ChoiceBox<Layer> layerChoiceBox = new ChoiceBox<>();
+
+	//Layer in which user is working on
+	private String choiceBoxSelection;
 
 	// Start point for a figure to draw.
 	private Point startPoint;
@@ -79,18 +85,18 @@ public class PaintPane extends BorderPane {
 		this.statusPane = statusPane;
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
-		for (EspecifiedToggleButton tool : toolsArr) { //Created Toggle group for the shapes, delete and selection buttons.
+
+		//Created Toggle group for the shapes, delete and selection buttons.
+		for (EspecifiedToggleButton tool : toolsArr) {
 			tool.setMinWidth(90);
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
-		//MODIFICAR ESTO
-		String st[] = {"Layer 1 ", "Layer 2", "Layer 3"};
-		ChoiceBox<String> box = new ChoiceBox<>(FXCollections.observableArrayList(st));
-		//loop that assigns the choice box options
+
+		/*/loop that assigns the choice box options
 		for(int i = 1; i <= 3; i++) {
 			layerChoiceBox.getItems().add(new Layer(i));
-		}
+		}*/
 
 		//Personalize Copy Format Button.
 		copyFormatButton.setMinWidth(90);
@@ -101,10 +107,14 @@ public class PaintPane extends BorderPane {
 		outlineSlider.setShowTickLabels(true);
 		outlineSlider.setCursor(Cursor.HAND);
 
+		//Personalize Layers choice box.
+		box.setMinWidth(90);
+		box.setCursor(Cursor.HAND);
+
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, box, layerChoiceBox);
+		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, box);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -118,9 +128,9 @@ public class PaintPane extends BorderPane {
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 		deleteButton.setOnAction(event -> currentButton = deleteButton);
 
-		layerChoiceBox.setOnAction(event -> {
-			choiceBoxSelection = layerChoiceBox.getValue().getLayerNum();
-			System.out.println(choiceBoxSelection);
+		//gets the layer user is working on.
+		box.setOnAction(event -> {
+			choiceBoxSelection = box.getValue();
 		});
 
 

@@ -5,7 +5,7 @@ import backend.model.FormatFigure;
 import java.util.ArrayList;
 
 public class Layer extends ArrayList<FormatFigure> {
-    private Integer layerNum;
+    private final Integer layerNum;
 
     public Layer(Integer layerNum) {
         this.layerNum = layerNum;
