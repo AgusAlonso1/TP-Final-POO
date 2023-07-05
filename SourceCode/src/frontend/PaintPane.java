@@ -64,7 +64,7 @@ public class PaintPane extends BorderPane {
 	//Layer in which user is working on
 	private String selectedLayer;
 
-	private List<String> selectedLayers = new ArrayList<>();
+	private List<String> selectedLayers = layerSelector.layersName();
 
 	// Start point for a figure to draw.
 	private Point startPoint;
@@ -108,7 +108,7 @@ public class PaintPane extends BorderPane {
 		//Personalize Layers choice box.
 		layersChoiceBox.setMinWidth(90);
 		layersChoiceBox.setCursor(Cursor.HAND);
-		layersChoiceBox.setValue("Layer 1");
+		layersChoiceBox.setValue("Layer 1 ");
 		selectedLayer = layersChoiceBox.getValue();
 
 		//Adding of all buttons of side-bar.
@@ -137,7 +137,6 @@ public class PaintPane extends BorderPane {
 			checkBox.setOnAction(event -> {
 				if (checkBox.isSelected()) {
 					selectedLayers.add(checkBox.getText());
-					System.out.println(checkBox.getText());
 				} else  {
 					selectedLayers.remove(checkBox.getText());
 				}
@@ -232,7 +231,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	// Draws the shapes
-	void redrawCanvas() {
+	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for (FormatFigure figure : canvasState.figures(selectedLayers)) {
 			if (selectedFigure == figure) {
