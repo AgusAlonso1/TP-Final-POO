@@ -3,6 +3,7 @@ package frontend;
 import backend.ButtonType;
 import backend.CanvasState;
 import backend.model.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -61,9 +62,10 @@ public class PaintPane extends BorderPane {
 	private final LayerSelector layerSelector = new LayerSelector();
 	private ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerSelector.layersName()));
 
-	//Layer in which user is working on
+	// Layer in which user is working on
 	private String selectedLayer;
 
+	// Layers that are selected.
 	private List<String> selectedLayers = layerSelector.layersName();
 
 	// Start point for a figure to draw.
@@ -82,7 +84,7 @@ public class PaintPane extends BorderPane {
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		VBox canvasAndLayers = new VBox();
-		canvasAndLayers.getChildren().addAll(canvas,new LayerSelector());
+		canvasAndLayers.getChildren().addAll(canvas,layerSelector);
 
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
@@ -130,14 +132,21 @@ public class PaintPane extends BorderPane {
 
 		//gets the layer user is working on.
 		layersChoiceBox.setOnAction(event -> {
+			String oldLayer = selectedLayer;
 			selectedLayer = layersChoiceBox.getValue();
+			//Move selected figure to new layer.
+			if(selectedFigure != null){
+				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
+			}
 		});
 
+		// Action of the checkbox modifies the view of the paintPane.
 		for (CheckBox checkBox : layerSelector.getLayers()) {
-			checkBox.setOnAction(event -> {
-				if (checkBox.isSelected()) {
+			checkBox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+				if(ov.getValue()) {
 					selectedLayers.add(checkBox.getText());
-				} else  {
+				}
+				else {
 					selectedLayers.remove(checkBox.getText());
 				}
 				redrawCanvas();

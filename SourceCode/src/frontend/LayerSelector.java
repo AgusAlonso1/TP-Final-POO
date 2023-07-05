@@ -13,13 +13,15 @@ import java.util.stream.Stream;
 public class LayerSelector extends HBox {
 
     private final static int amountOfLayers = 3;
-    List<CheckBox> checkBoxes = new ArrayList<>();
-
+    private List<CheckBox> checkBoxes = new ArrayList<>();
+    private List<String> layerNames = new ArrayList<>();
     public LayerSelector() {
         setStyle("-fx-background-color: #999");
         getChildren().add(new Label("Mostra Capas: "));
         for (int i=1; i <= amountOfLayers; i++) {
-            CheckBox checkBox = new CheckBox("Layer %d ".formatted(i));
+            String layer = "Layer %d ".formatted(i);
+            layerNames.add(layer);
+            CheckBox checkBox = new CheckBox(layer);
             checkBox.setIndeterminate(false); //Set undetermined to false
             checkBox.setSelected(true);
             checkBoxes.add(checkBox);
@@ -29,8 +31,7 @@ public class LayerSelector extends HBox {
     }
 
     public List<String> layersName() {
-        Stream<CheckBox> stream = checkBoxes.stream();
-        return stream.map(Labeled::getText).toList();
+        return layerNames;
     }
 
     public List<CheckBox> getLayers() {

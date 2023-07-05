@@ -16,6 +16,12 @@ public class CanvasState {
           layersMap.get(layer).remove(figure);
      }
 
+     // Move figure form layers and add to a new one.
+     public void moveFigure(FormatFigure figure, String oldLayer, String newLayer){
+        deleteFigure(figure,oldLayer);
+        addFigure(figure,newLayer);
+     }
+
      //Returns the list of FormatFigures acording to the selected layers in the checkboxes.
      public Iterable<FormatFigure> figures(List<String> selectedLayers) {
          List<FormatFigure> toReturn = new ArrayList<>();
