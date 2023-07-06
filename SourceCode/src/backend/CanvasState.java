@@ -39,4 +39,12 @@ public class CanvasState {
         return layersMap.getOrDefault(layer, new ArrayList<>());
     }
 
+    public Iterable<FormatFigure> getFiguresCopy(List<String> selectedLayers){
+        List<FormatFigure> copy = new ArrayList<>();
+        for (FormatFigure figure : figures(selectedLayers)) {
+            copy.add(figure);
+        }
+        return copy;
+    }
+
 }

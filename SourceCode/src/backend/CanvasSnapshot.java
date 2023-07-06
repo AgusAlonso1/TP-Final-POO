@@ -2,18 +2,20 @@ package backend;
 
 import backend.model.FormatFigure;
 
+import java.util.Iterator;
+
 public class CanvasSnapshot {
     private CanvasAction lastActionType;
     private String lastActionFigureName;
-    private CanvasState canvasSnapshot;
+    private Iterable<FormatFigure> canvasSnapshot;
 
-    public CanvasSnapshot(CanvasAction lastActionType, String lastActionFigureName, CanvasState canvasSnapshot) {
+    public CanvasSnapshot(CanvasAction lastActionType, String lastActionFigureName, Iterable<FormatFigure> canvasSnapshot) {
         this.lastActionType = lastActionType;
         this.lastActionFigureName = lastActionFigureName;
         this.canvasSnapshot = canvasSnapshot;
     }
 
-    public CanvasState getCanvasSnapshot(){
+    public Iterable<FormatFigure> getCanvasSnapshot(){
         return canvasSnapshot;
     }
 
