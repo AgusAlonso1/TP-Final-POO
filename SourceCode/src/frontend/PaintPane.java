@@ -83,6 +83,9 @@ public class PaintPane extends BorderPane {
 
 	private Iterable<FormatFigure> currentFigures;
 
+	//Tags bar ----------------------------------------------------------------------------------------
+	private TagsBar tagsBar;
+
 	// Start point for a figure to draw -------------------------------------------------------------------------
 	private Point startPoint;
 
@@ -95,13 +98,14 @@ public class PaintPane extends BorderPane {
 	private EspecifiedToggleButton currentButton = selectionButton;
 
 
-	public PaintPane(CanvasState canvasState, StatusPane statusPane, ActionMenu undoAndRedo) {
+	public PaintPane(CanvasState canvasState, StatusPane statusPane, ActionMenu undoAndRedo, TagsBar tagsBar) {
 		VBox canvasAndLayers = new VBox();
 		canvasAndLayers.getChildren().addAll(canvas,layerSelector);
 
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.undoAndRedo = undoAndRedo;
+		this.tagsBar = tagsBar;
 		updateLabels();
 
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
@@ -227,7 +231,7 @@ public class PaintPane extends BorderPane {
 		});
 
 		// Undo and redo button actions
-		undoAndRedo.getRedo().setOnAction(event ->{
+		this.undoAndRedo.getRedo().setOnAction(event ->{
 			if(canvasVersions.canRedo()){
 				canvasVersions.redo();
 				canvasState.redoFigureChange();
@@ -236,7 +240,7 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		undoAndRedo.getUndo().setOnAction(event ->{
+		this.undoAndRedo.getUndo().setOnAction(event ->{
 			if(canvasVersions.canUndo()){
 				canvasVersions.undo();
 				canvasState.undoFigureChange();

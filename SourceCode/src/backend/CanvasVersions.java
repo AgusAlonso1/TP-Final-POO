@@ -4,12 +4,10 @@ import backend.model.FormatFigure;
 
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CanvasVersions {
     private Deque<CanvasSnapshot> undoVersions = new LinkedList<>();
-    private CanvasSnapshot oldVersion;
     private Deque<CanvasSnapshot> redoVersions = new LinkedList<>();
 
     public Iterable<FormatFigure> getCurrentVersion() {
