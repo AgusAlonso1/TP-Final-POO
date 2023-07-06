@@ -213,7 +213,6 @@ public class PaintPane extends BorderPane {
 				else {
 					selectedLayers.remove(checkBox.getText());
 				}
-				canvasVersions.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
 				updateLabels();
 				redrawCanvas();
 			});
@@ -271,7 +270,7 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
 				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				canvasVersions.saveVersion(CanvasAction.DRAW,newFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				canvasVersions.saveVersion(CanvasAction.DRAW,newFigure.getShapeName(), canvasState.getFiguresCopy(selectedLayers));
 				canvasVersions.clearRedo(); //Reset redo versions
 				redrawCanvas(); //Redraw the canvas.
 			}

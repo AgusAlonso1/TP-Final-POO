@@ -16,6 +16,7 @@ public class TagsBar extends HBox {
         this.specificTagsButton = new RadioButton("Solo");
         ToggleGroup toggleGroup = new ToggleGroup();
         allTagsButton.setToggleGroup(toggleGroup);
+        specificTagsButton.setToggleGroup(toggleGroup);
         this.specificTags = new TextField();
         this.getChildren().addAll(label,allTagsButton,specificTagsButton,specificTags);
         setSpacing(SPACING);
