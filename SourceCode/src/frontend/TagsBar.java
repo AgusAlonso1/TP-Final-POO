@@ -4,6 +4,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
+import java.util.StringTokenizer;
+
 public class TagsBar extends HBox {
     private static double SPACING = 10;
     private RadioButton allTagsButton, specificTagsButton;
@@ -29,6 +31,7 @@ public class TagsBar extends HBox {
         return specificTagsButton;
     }
     public String getSpecificTagText() {
-        return specificTag.getText();
+        StringTokenizer tokenizer = new StringTokenizer(specificTag.getText()," ");
+        return tokenizer.nextToken();
     }
 }
