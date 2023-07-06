@@ -83,11 +83,8 @@ public class PaintPane extends BorderPane {
 
 	private Iterable<FormatFigure> currentFigures;
 
-
-
 	// Start point for a figure to draw -------------------------------------------------------------------------
 	private Point startPoint;
-
 
 	// StatusBar -------------------------------------------------------------------------
 	private StatusPane statusPane;
@@ -97,6 +94,7 @@ public class PaintPane extends BorderPane {
 	//Current toggled button, default is set to the selection button -------------------------------------------------------------------------
 	private EspecifiedToggleButton currentButton = selectionButton;
 
+
 	public PaintPane(CanvasState canvasState, StatusPane statusPane, ActionMenu undoAndRedo) {
 		VBox canvasAndLayers = new VBox();
 		canvasAndLayers.getChildren().addAll(canvas,layerSelector);
@@ -104,6 +102,8 @@ public class PaintPane extends BorderPane {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.undoAndRedo = undoAndRedo;
+		updateLabels();
+
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 
@@ -140,6 +140,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100);
 		gc.setLineWidth(1);
 
+		//Set on action of the buttons ------------------------------------------------------------------------------
 		//When a specific button is pressed the "currentButton" field is updated.
 		rectangleButton.setOnAction(event -> currentButton = rectangleButton);
 		squareButton.setOnAction(event -> currentButton = squareButton);
@@ -155,6 +156,7 @@ public class PaintPane extends BorderPane {
 			if (selectedFigure != null) {
 				canvasState.deleteFigure(selectedFigure,selectedLayer);
 				canvasVersions.saveVersion(CanvasAction.DELETE,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				updateLabels();
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -165,6 +167,7 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
 				canvasVersions.saveVersion(CanvasAction.CHANGE_BORDER_COLOR,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				updateLabels();
 				redrawCanvas();
 			}
 		});
@@ -172,6 +175,7 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
 				canvasVersions.saveVersion(CanvasAction.CHANGE_FILL_COLOR,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				updateLabels();
 				redrawCanvas();
 			}
 		});
@@ -191,6 +195,7 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
 				canvasVersions.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				updateLabels();
 				redrawCanvas();
 			}
 		});
@@ -205,6 +210,7 @@ public class PaintPane extends BorderPane {
 					selectedLayers.remove(checkBox.getText());
 				}
 				canvasVersions.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				updateLabels();
 				redrawCanvas();
 			});
 		}
@@ -222,16 +228,25 @@ public class PaintPane extends BorderPane {
 
 		// Undo and redo button actions
 		undoAndRedo.getRedo().setOnAction(event ->{
-			canvasVersions.redo();
-			undoAndRedo.setRedoLabel(canvasVersions.getCurrentVersion().toString());
-			//canvasVersions.getCurrentVersion().getCanvasSnapshot();
+			if(canvasVersions.canRedo()){
+				canvasVersions.redo();
+				canvasState.redoFigureChange();
+				updateLabels();
+				redrawCanvas();
+			}
 		});
 
 		undoAndRedo.getUndo().setOnAction(event ->{
-			canvasVersions.undo();
-			undoAndRedo.setUndoLabel(canvasVersions.getCurrentVersion().toString());
-			//canvasVersions.getCurrentVersion().getCanvasSnapshot();
+			if(canvasVersions.canUndo()){
+				canvasVersions.undo();
+				canvasState.undoFigureChange();
+				updateLabels();
+				redrawCanvas();
+			}
 		});
+		//------------------------------------------------------------------------------
+
+		//Movement of the mouse ----------------------------------------------------------------
 
 		//Selection of Point to draw.
 		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
@@ -252,7 +267,7 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
 				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				canvasVersions.saveVersion(CanvasAction.DRAW,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				canvasVersions.saveVersion(CanvasAction.DRAW,newFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
 				canvasVersions.clearRedo(); //Reset redo versions
 				redrawCanvas(); //Redraw the canvas.
 			}
@@ -295,6 +310,7 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+		// -----------------------------------------------------------------------------
 
 		setLeft(buttonsBox);
 		setRight(canvasAndLayers);
@@ -329,5 +345,10 @@ public class PaintPane extends BorderPane {
 		canvasVersions.saveVersion(CanvasAction.COPY_FORMAT, figure.getShapeName(), canvasState.getFiguresCopy(selectedLayers));
 		copiedFormat = null;
 
+	}
+
+	private void updateLabels(){
+		undoAndRedo.setUndoLabel(canvasVersions.lastActionUndo());
+		undoAndRedo.setRedoLabel(canvasVersions.lastActionRedo());
 	}
 }

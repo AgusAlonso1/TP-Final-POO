@@ -15,6 +15,11 @@ public class CanvasSnapshot {
         this.canvasSnapshot = canvasSnapshot;
     }
 
+    //empty canvas
+    public CanvasSnapshot(Iterable<FormatFigure> canvasSnapshot){
+        this.canvasSnapshot = canvasSnapshot;
+    }
+
     public Iterable<FormatFigure> getCanvasSnapshot(){
         return canvasSnapshot;
     }
