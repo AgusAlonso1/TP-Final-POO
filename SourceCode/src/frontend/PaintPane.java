@@ -30,6 +30,8 @@ public class PaintPane extends BorderPane {
 	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
+	private int DEFAULT_LINE_WIDTH = 1;
+	private int BUTTON_MIN_WIDTH = 90;
 
 	// Default value of fill color, line color and line width -------------------------------------------------------------------------
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
@@ -84,6 +86,7 @@ public class PaintPane extends BorderPane {
 	private Iterable<FormatFigure> currentFigures;
 
 	//Tag assignment area ---------------------------------------------------------------------------------------
+	private int DEFAULT_ROW_HEIGHT = 4;
 	private TextArea tagTextArea = new TextArea();
 	private Button saveTagButton = new Button("Guardar");
 	private String activeTag = null;
@@ -118,13 +121,13 @@ public class PaintPane extends BorderPane {
 
 		//Created Toggle group for the shapes, delete and selection buttons.
 		for (EspecifiedToggleButton tool : toolsArr) {
-			tool.setMinWidth(90);
+			tool.setMinWidth(BUTTON_MIN_WIDTH);
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
 
 		//Personalize Copy Format Button.
-		copyFormatButton.setMinWidth(90);
+		copyFormatButton.setMinWidth(BUTTON_MIN_WIDTH);
 		copyFormatButton.setCursor(Cursor.HAND);
 
 		//Personalize Line Width Button.
@@ -133,7 +136,7 @@ public class PaintPane extends BorderPane {
 		outlineSlider.setCursor(Cursor.HAND);
 
 		//Personalize Layers choice box.
-		layersChoiceBox.setMinWidth(90);
+		layersChoiceBox.setMinWidth(BUTTON_MIN_WIDTH);
 		layersChoiceBox.setCursor(Cursor.HAND);
 		layersChoiceBox.setValue("Layer 1 ");
 		selectedLayer = layersChoiceBox.getValue();
@@ -147,7 +150,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
-		gc.setLineWidth(1);
+		gc.setLineWidth(DEFAULT_LINE_WIDTH);
 
 		//Set on action of the buttons ------------------------------------------------------------------------------
 		//When a specific button is pressed the "currentButton" field is updated.
@@ -197,14 +200,14 @@ public class PaintPane extends BorderPane {
 
 		//Logic linked to tag saver and tag text area
 		tagTextArea.setWrapText(true);
-		tagTextArea.setPrefRowCount(4);
-		tagsBar.getAllTagsButton().setOnAction(event -> {
+		tagTextArea.setPrefRowCount(DEFAULT_ROW_HEIGHT);
+		this.tagsBar.getAllTagsButton().setOnAction(event -> {
 			if(tagsBar.getAllTagsButton().isSelected()) {
 				activeTag = null;
 				redrawCanvas();
 			}
 		});
-		tagsBar.getSpecificTagsButton().setOnAction(event -> {
+		this.tagsBar.getSpecificTagsButton().setOnAction(event -> {
 			if(tagsBar.getSpecificTagsButton().isSelected()) {
 				activeTag = tagsBar.getSpecificTagText();
 				redrawCanvas();
