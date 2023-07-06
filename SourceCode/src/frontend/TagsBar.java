@@ -7,18 +7,28 @@ import javafx.scene.layout.HBox;
 public class TagsBar extends HBox {
     private static double SPACING = 10;
     private RadioButton allTagsButton, specificTagsButton;
-    private TextField specificTags;
+    private TextField specificTag;
     public TagsBar() {
         setStyle("-fx-background-color: #999");
         setAlignment(Pos.CENTER);
         Label label = new Label("Mostrar Etiquetas:");
         this.allTagsButton = new RadioButton("Todas");
+        allTagsButton.setSelected(true);
         this.specificTagsButton = new RadioButton("Solo");
         ToggleGroup toggleGroup = new ToggleGroup();
         allTagsButton.setToggleGroup(toggleGroup);
         specificTagsButton.setToggleGroup(toggleGroup);
-        this.specificTags = new TextField();
-        this.getChildren().addAll(label,allTagsButton,specificTagsButton,specificTags);
+        this.specificTag = new TextField();
+        this.getChildren().addAll(label, allTagsButton, specificTagsButton, specificTag);
         setSpacing(SPACING);
+    }
+    public RadioButton getAllTagsButton() {
+        return allTagsButton;
+    }
+    public RadioButton getSpecificTagsButton() {
+        return specificTagsButton;
+    }
+    public String getSpecificTagText() {
+        return specificTag.getText();
     }
 }

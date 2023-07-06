@@ -83,6 +83,11 @@ public class PaintPane extends BorderPane {
 
 	private Iterable<FormatFigure> currentFigures;
 
+	//Tag assignment area ---------------------------------------------------------------------------------------
+	private TextArea tagTextArea = new TextArea();
+	private Button saveTagButton = new Button("Guardar");
+	private String activeTag = null;
+
 	//Tags bar ----------------------------------------------------------------------------------------
 	private TagsBar tagsBar;
 
@@ -138,7 +143,7 @@ public class PaintPane extends BorderPane {
 		// Add the bottons that manipulate figure.
 		buttonsBox.getChildren().addAll(toolsArr);
 		// Add the bottons that define the format the figure.
-		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox);
+		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox, tagTextArea, saveTagButton);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
 		buttonsBox.setPrefWidth(100);
@@ -188,6 +193,29 @@ public class PaintPane extends BorderPane {
 				selectedFigure.getFormat().setLineWidth(new_val.doubleValue());
 				redrawCanvas();
 			}
+		});
+
+		//Logic linked to tag saver and tag text area
+		tagTextArea.setWrapText(true);
+		tagTextArea.setPrefRowCount(4);
+		tagsBar.getAllTagsButton().setOnAction(event -> {
+			if(tagsBar.getAllTagsButton().isSelected()) {
+				activeTag = null;
+				redrawCanvas();
+			}
+		});
+		tagsBar.getSpecificTagsButton().setOnAction(event -> {
+			if(tagsBar.getSpecificTagsButton().isSelected()) {
+				activeTag = tagsBar.getSpecificTagText();
+				redrawCanvas();
+			}
+		});
+		saveTagButton.setOnAction(event -> {
+			String undelimitedTags = tagTextArea.getText();
+			if(selectedFigure != null) {
+				selectedFigure.addTags(undelimitedTags.split("\s"));
+			}
+
 		});
 
 
@@ -289,6 +317,7 @@ public class PaintPane extends BorderPane {
 
 		// Selection of shape.
 		canvas.setOnMouseClicked(event -> {
+			tagTextArea.clear();
 			if(selectionButton.isSelected()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				selectedFigure = findSelectedFigure(eventPoint);
@@ -297,6 +326,7 @@ public class PaintPane extends BorderPane {
 				}
 				else{
 					applyFormat(selectedFigure);
+					tagTextArea.insertText(0, selectedFigure.getTags());
 					statusPane.updateStatus("Se seleccionó: %s".formatted(selectedFigure)); //Modifies message on the bottom of the app
 				}
 				redrawCanvas();
@@ -323,13 +353,19 @@ public class PaintPane extends BorderPane {
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		currentFigures = canvasVersions.getCurrentVersion();
-		for (FormatFigure figure : currentFigures) {
-			if (selectedFigure == figure) {
+		for (FormatFigure figure : canvasState.figures(selectedLayers)) {
+			if (selectedFigure == figure && shouldDrawByTag(figure)) {
 				figure.drawFigure(SELECTED_LINE_COLOR_HX);
-			} else {
+			} else if(shouldDrawByTag(figure)){
 				figure.drawFigure();
 			}
 		}
+	}
+	private boolean shouldDrawByTag(FormatFigure figure) {
+		if(activeTag == null) {
+			return true;
+		}
+		return figure.getTags().contains(activeTag);
 	}
 	private FormatFigure findSelectedFigure(Point eventPoint){
 		FormatFigure figureToReturn = null;

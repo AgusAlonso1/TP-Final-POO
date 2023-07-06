@@ -12,6 +12,7 @@ public class CanvasVersions {
 
     public Iterable<FormatFigure> getCurrentVersion() {
         if(!canUndo()){//canvas is clear
+            System.out.println("entro al if");
             return new ArrayList<>();
         }
         return undoVersions.peek().getCanvasSnapshot();

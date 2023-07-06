@@ -6,6 +6,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FrontFigureDrawer implements FigureDrawer {
     private final GraphicsContext gc;
@@ -42,6 +44,5 @@ public class FrontFigureDrawer implements FigureDrawer {
         gc.setFill(Color.web(format.getFillColor()));
         gc.setLineWidth(format.getLineWidth());
     }
-
 
 }
