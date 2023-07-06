@@ -52,4 +52,9 @@ public class Rectangle extends FormatFigure{
         return this == other || (other instanceof Rectangle r && r.bottomRight.equals(bottomRight) && r.topLeft.equals(topLeft) && r.getFormat().equals(this.getFormat()));
     }
 
+    @Override
+    public String getShapeName(){
+        return "Rectangulo";
+    }
+
 }

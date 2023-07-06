@@ -5,12 +5,16 @@ import backend.model.FormatFigure;
 public class CanvasSnapshot {
     private CanvasAction lastActionType;
     private String lastActionFigureName;
-    private Iterable<FormatFigure> canvasSnapshot;
+    private CanvasState canvasSnapshot;
 
-    public CanvasSnapshot(CanvasAction lastActionType, String lastActionFigureName, Iterable<FormatFigure> canvasSnapshot) {
+    public CanvasSnapshot(CanvasAction lastActionType, String lastActionFigureName, CanvasState canvasSnapshot) {
         this.lastActionType = lastActionType;
         this.lastActionFigureName = lastActionFigureName;
         this.canvasSnapshot = canvasSnapshot;
+    }
+
+    public CanvasState getCanvasSnapshot(){
+        return canvasSnapshot;
     }
 
     @Override

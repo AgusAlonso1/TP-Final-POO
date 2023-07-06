@@ -7,7 +7,8 @@ public class MainFrame extends VBox {
 
     public MainFrame(CanvasState canvasState) {
         StatusPane statusPane = new StatusPane();
-        getChildren().addAll(new AppMenuBar(), new PaintPane(canvasState, statusPane), statusPane);
+        ActionMenu undoAndRedo = new ActionMenu();
+        getChildren().addAll(new AppMenuBar(), undoAndRedo, new PaintPane(canvasState, statusPane, undoAndRedo), statusPane);
     }
 
 }

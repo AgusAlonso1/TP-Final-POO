@@ -18,5 +18,9 @@ public class Square extends Rectangle {
     public void drawFigureWithFormat(Format format) {
         getFigureDrawer().drawSquare(format, getTopLeft().getX(), getTopLeft().getY(), getHeight());
     }
+    @Override
+    public String getShapeName(){
+        return "Cuadrado";
+    }
 
 }

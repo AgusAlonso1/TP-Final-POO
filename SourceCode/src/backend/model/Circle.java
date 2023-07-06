@@ -26,4 +26,9 @@ public class Circle extends Ellipse {
         getFigureDrawer().drawCircle(format, getTopLeftBound().getX(), getTopLeftBound().getY(), getDiameter());
     }
 
+    @Override
+    public String getShapeName(){
+        return "Circulo";
+    }
+
 }

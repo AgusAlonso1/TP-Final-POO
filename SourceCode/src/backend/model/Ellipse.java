@@ -57,4 +57,9 @@ public class Ellipse extends FormatFigure {
         return this == other || (other instanceof Ellipse e && e.centerPoint.equals(centerPoint) && e.sMayorAxis == sMayorAxis && e.sMinorAxis == sMinorAxis && e.getFormat().equals(getFormat()));
     }
 
+    @Override
+    public String getShapeName(){
+        return "Elipse";
+    }
+
 }

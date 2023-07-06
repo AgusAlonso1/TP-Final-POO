@@ -13,7 +13,7 @@ public class CanvasVersions {
         return undoVersions.peek();
     }
 
-    public void saveVersion(CanvasAction action, String figureName, Iterable<FormatFigure> snapshot) {
+    public void saveVersion(CanvasAction action, String figureName, CanvasState snapshot) {
         undoVersions.push(new CanvasSnapshot(action,figureName,snapshot));
     }
 

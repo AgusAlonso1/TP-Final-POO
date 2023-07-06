@@ -1,7 +1,9 @@
 package frontend;
 
 import backend.ButtonType;
+import backend.CanvasAction;
 import backend.CanvasState;
+import backend.CanvasVersions;
 import backend.model.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,29 +15,30 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class PaintPane extends BorderPane {
 
-	// BackEnd CanvasState.
+	// BackEnd CanvasState -------------------------------------------------------------------------
 	private CanvasState canvasState;
 
-	// Canvas and related.
+	//Canvas versions -------------------------------------------------------------------------
+	private CanvasVersions canvasVersions;
+
+	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
 
-	// Default value of fill color, line color and line width.
+	// Default value of fill color, line color and line width -------------------------------------------------------------------------
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
 	private static final Color DEFAULT_FILL_COLOUR = Color.YELLOW;
 	private static final String SELECTED_LINE_COLOR_HX = Color.RED.toString();
 	private static final double LINE_WIDTH = 1.0;
 
-	// Current format of shapes to draw.
+	// Current format of shapes to draw -------------------------------------------------------------------------
 	private Format currentFormat = new Format(DEFAULT_LINE_COLOUR.toString(), DEFAULT_FILL_COLOUR.toString(), LINE_WIDTH );
 
-	// Side Menu Toggle Buttons.
+	// Side Menu Buttons for drawing, selecting and deleting -------------------------------------------------------------------------
 	private final EspecifiedToggleButton selectionButton = new EspecifiedToggleButton("Seleccionar", ButtonType.MISC);
 	private final EspecifiedToggleButton rectangleButton = new EspecifiedToggleButton("Rectángulo", ButtonType.RECTANGLE);
 	private final EspecifiedToggleButton circleButton = new EspecifiedToggleButton("Círculo", ButtonType.CIRCLE);
@@ -43,51 +46,58 @@ public class PaintPane extends BorderPane {
 	private final EspecifiedToggleButton ellipseButton = new EspecifiedToggleButton("Elipse", ButtonType.ELLIPSE);
 	private final EspecifiedToggleButton deleteButton = new EspecifiedToggleButton("Borrar", ButtonType.MISC);
 
-	//Buttons and sliders for assignment.
-	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
-	private final Label outline = new Label("Borde");
+	// Selected figure -------------------------------------------------------------------------
+	private FormatFigure selectedFigure;
 
-	// Format constants
+	// Format Outline Constants -------------------------------------------------------------------------
 	private final static double MIN_OUTLINE_WIDTH = 1.0;
 	private final static double MAX_OUTLINE_WIDTH = 50.0;
 	private final static double DEFAULT_OUTLINE_WIDTH = 25.0;
 
-	// Format Buttons
+	// Format Outline Buttons -------------------------------------------------------------------------
+	private final Label outline = new Label("Borde");
 	private final Slider outlineSlider = new Slider(MIN_OUTLINE_WIDTH, MAX_OUTLINE_WIDTH, DEFAULT_OUTLINE_WIDTH);
 	private final ColorPicker outlinePicker = new ColorPicker(DEFAULT_LINE_COLOUR);
+
+	// Format Color Fill Button  -------------------------------------------------------------------------
 	private final Label fill = new Label("Relleno");
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
-	//Layers Choice Box
+	//Copy button ----------------------------------------------------------------------------
+	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
+
+	//Layers Choice Box -------------------------------------------------------------------------
 	private final LayerSelector layerSelector = new LayerSelector();
 	private ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerSelector.layersName()));
 
-	// Layer in which user is working on
+	// Layer in which user is working on -------------------------------------------------------------------------
 	private String selectedLayer;
 
-	// Layers that are selected.
+	// Layers that are selected -------------------------------------------------------------------------
 	private List<String> selectedLayers = layerSelector.layersName();
 
-	// Start point for a figure to draw.
+	// Undo and Redo Button -------------------------------------------------------------------------------------
+	private ActionMenu undoAndRedo;
+
+	// Start point for a figure to draw -------------------------------------------------------------------------
 	private Point startPoint;
 
-	// Selected figure.
-	private FormatFigure selectedFigure;
 
-	// StatusBar.
+	// StatusBar -------------------------------------------------------------------------
 	private StatusPane statusPane;
 
 	private Format copiedFormat = null;
 
-	//Current toggled button, default is set to the selection button.
+	//Current toggled button, default is set to the selection button -------------------------------------------------------------------------
 	private EspecifiedToggleButton currentButton = selectionButton;
 
-	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+	public PaintPane(CanvasState canvasState, StatusPane statusPane, ActionMenu undoAndRedo) {
 		VBox canvasAndLayers = new VBox();
 		canvasAndLayers.getChildren().addAll(canvas,layerSelector);
 
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
+		this.undoAndRedo = undoAndRedo;
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 
@@ -115,7 +125,9 @@ public class PaintPane extends BorderPane {
 
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
+		// Add the bottons that manipulate figure.
 		buttonsBox.getChildren().addAll(toolsArr);
+		// Add the bottons that define the format the figure.
 		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
@@ -134,12 +146,14 @@ public class PaintPane extends BorderPane {
 		outlinePicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
+				canvasVersions.saveVersion(CanvasAction.CHANGE_BORDER_COLOR,selectedFigure.getShapeName(),canvasState);
 				redrawCanvas();
 			}
 		});
 		fillPicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
+				canvasVersions.saveVersion(CanvasAction.CHANGE_FILL_COLOR,selectedFigure.getShapeName(),canvasState);
 			}
 		});
 		outlineSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
@@ -157,6 +171,7 @@ public class PaintPane extends BorderPane {
 			//Move selected figure to new layer.
 			if(selectedFigure != null){
 				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
+				canvasVersions.saveVersion(CanvasAction.COPY_FORMAT,selectedFigure.getShapeName(),canvasState);
 			}
 		});
 
@@ -169,6 +184,7 @@ public class PaintPane extends BorderPane {
 				else {
 					selectedLayers.remove(checkBox.getText());
 				}
+				canvasVersions.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure.getShapeName(),canvasState);
 				redrawCanvas();
 			});
 		}
@@ -181,7 +197,21 @@ public class PaintPane extends BorderPane {
 			}
 			else {
 				copiedFormat = selectedFigure.getFormat();
+				canvasVersions.saveVersion(CanvasAction.COPY_FORMAT,selectedFigure.getShapeName(),canvasState);
 			}
+		});
+
+		// Undo and redo button actions
+		undoAndRedo.getRedo().setOnAction(event ->{
+			canvasVersions.redo();
+			undoAndRedo.setRedoLabel(canvasVersions.getCurrentVersion().toString());
+			//canvasVersions.getCurrentVersion().getCanvasSnapshot();
+		});
+
+		undoAndRedo.getUndo().setOnAction(event ->{
+			canvasVersions.undo();
+			undoAndRedo.setUndoLabel(canvasVersions.getCurrentVersion().toString());
+			//canvasVersions.getCurrentVersion().getCanvasSnapshot();
 		});
 
 		//Selection of Point to draw.
@@ -203,6 +233,7 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
 				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
+				canvasVersions.saveVersion(CanvasAction.DRAW,selectedFigure.getShapeName(),canvasState);
 				redrawCanvas(); //Redraw the canvas.
 			}
 		});
@@ -249,6 +280,7 @@ public class PaintPane extends BorderPane {
 			if (selectedFigure != null) {
 				canvasState.deleteFigure(selectedFigure,selectedLayer);
 				selectedFigure = null;
+				canvasVersions.saveVersion(CanvasAction.DELETE,selectedFigure.getShapeName(),canvasState);
 				redrawCanvas();
 			}
 		});

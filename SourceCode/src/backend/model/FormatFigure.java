@@ -10,6 +10,8 @@ public abstract class FormatFigure {
     }
     public abstract boolean pointIsIn(Point point);
     public abstract void moveFigure(double diffX, double diffY);
+
+    public abstract String getShapeName();
     public void drawFigure(){
         drawFigure(format.getLineColor());
     }
