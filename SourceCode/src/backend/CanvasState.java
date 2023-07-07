@@ -44,7 +44,4 @@ public class CanvasState {
         }
         return copy;
     }
-
-
-
 }

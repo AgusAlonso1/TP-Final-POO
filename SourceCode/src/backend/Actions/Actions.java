@@ -39,8 +39,9 @@ public class Actions {
     public void undo() {
         if(!canUndo()){
             throw new NothingToDoException("Nothing to Undo.");
+        }else if(!undoVersions.peek().isModifierActionType()){ //Action type is no a format change
+            canvasState.deleteFigure(undoVersions.peek().getLastActionFigure(),undoVersions.peek().getLastActionLayer());
         }
-        canvasState.deleteFigure(undoVersions.peek().getLastActionFigure(),undoVersions.peek().getLastActionLayer());
         redoVersions.push(undoVersions.pop());
     }
 
@@ -48,8 +49,9 @@ public class Actions {
     public void redo() {
         if(!canRedo()){
             throw new NothingToDoException("Nothing to Redo.");
+        }else if(!redoVersions.peek().isModifierActionType()) { //Action type is no a format change
+            canvasState.addFigure(redoVersions.peek().getLastActionFigure(), redoVersions.peek().getLastActionLayer());
         }
-        canvasState.addFigure(redoVersions.peek().getLastActionFigure(),redoVersions.peek().getLastActionLayer());
         undoVersions.push(redoVersions.pop());
     }
 
