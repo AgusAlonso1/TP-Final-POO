@@ -1,8 +1,7 @@
-package backend.Actions;
+package backend.actions;
 
 import backend.CanvasState;
-import backend.NothingToDoException;
-import backend.model.FormatFigure;
+import backend.customExceptions.NothingToDoException;
 
 import java.util.Deque;
 import java.util.LinkedList;

@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.FigureDrawer;
+
 public class Rectangle extends FormatFigure{
 
     private final Point topLeft, bottomRight;

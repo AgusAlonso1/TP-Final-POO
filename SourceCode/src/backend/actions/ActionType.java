@@ -1,4 +1,4 @@
-package backend.Actions;
+package backend.actions;
 
 public enum ActionType {
     DRAW("Dibujar"),

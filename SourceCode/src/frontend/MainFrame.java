@@ -1,6 +1,8 @@
 package frontend;
 
 import backend.CanvasState;
+import frontend.customLayouts.ActionMenu;
+import frontend.customLayouts.TagsBar;
 import javafx.scene.layout.VBox;
 
 public class MainFrame extends VBox {

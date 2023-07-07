@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.FigureDrawer;
+
 public class Ellipse extends FormatFigure {
 
     protected final Point centerPoint;

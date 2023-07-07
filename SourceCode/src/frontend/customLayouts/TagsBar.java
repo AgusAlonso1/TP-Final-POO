@@ -1,4 +1,4 @@
-package frontend;
+package frontend.customLayouts;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

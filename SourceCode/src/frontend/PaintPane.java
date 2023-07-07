@@ -1,11 +1,17 @@
 package frontend;
 
-import backend.Actions.LastAction;
+import backend.actions.LastAction;
 import backend.ButtonType;
-import backend.Actions.ActionType;
+import backend.actions.ActionType;
 import backend.CanvasState;
-import backend.Actions.ActionManager;
+import backend.actions.ActionManager;
+import backend.customExceptions.NothingToDoException;
 import backend.model.*;
+import frontend.customLayouts.ActionMenu;
+import frontend.customLayouts.LayerSelector;
+import frontend.customLayouts.TagsBar;
+import frontend.customTools.EspecifiedToggleButton;
+import frontend.customTools.FrontFigureDrawer;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -30,8 +36,11 @@ public class PaintPane extends BorderPane {
 	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
-	private final int DEFAULT_LINE_WIDTH = 1;
-	private final int BUTTON_MIN_WIDTH = 90;
+	private static final int DEFAULT_LINE_WIDTH = 1;
+	private static final int BUTTON_MIN_WIDTH = 90;
+
+	//Error alert contants
+	private static final String ERROR = "ERROR";
 
 	// Default value of fill color, line color and line width -------------------------------------------------------------------------
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
@@ -86,11 +95,11 @@ public class PaintPane extends BorderPane {
 	private Iterable<FormatFigure> currentFigures;
 
 	//Tag assignment area ---------------------------------------------------------------------------------------
-	private final int DEFAULT_ROW_HEIGHT = 4;
+	private static final int DEFAULT_ROW_HEIGHT = 4;
 	private final TextArea tagTextArea = new TextArea();
-	private Button saveTagButton = new Button("Guardar");
+	private final Button saveTagButton = new Button("Guardar");
 	private String activeTag = null;
-	private final String TAG_STRING_DELIMITER = "\s";
+	private static final String TAG_STRING_DELIMITER = "\s";
 
 	//Tags bar ----------------------------------------------------------------------------------------
 	private final TagsBar tagsBar;
@@ -195,10 +204,8 @@ public class PaintPane extends BorderPane {
 		fillPicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				FormatFigure oldFigure = selectedFigure.getFigureCopy();
-				System.out.println("%s, %s".formatted(oldFigure.getFormat(),selectedFigure.getFormat()));
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
 				LastAction lastAct = new LastAction(ActionType.CHANGE_FILL_COLOR,oldFigure,selectedFigure,selectedLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()),(canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
-				System.out.println("%s, %s".formatted(oldFigure.getFormat(),selectedFigure.getFormat()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -231,11 +238,10 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null) {
 				selectedFigure.addTags(undelimitedTags.split(TAG_STRING_DELIMITER));
 			}
-
 		});
 
 
-		//gets the layer user is working on.
+		//Gets the layer user is working on.
 		layersChoiceBox.setOnAction(event -> {
 			String oldLayer = selectedLayer;
 			selectedLayer = layersChoiceBox.getValue();
@@ -275,18 +281,26 @@ public class PaintPane extends BorderPane {
 
 		// Undo and redo button actions
 		this.undoAndRedo.getRedo().setOnAction(event ->{
-			if(lastAction.canRedo()){
-				lastAction.redo();
-				updateLabels();
-				redrawCanvas();
+			try {
+				//if(lastAction.canRedo()){
+					lastAction.redo();
+					updateLabels();
+					redrawCanvas();
+				//}
+			} catch(NothingToDoException exception) {
+				setErrorAlarm(exception.getMessage());
 			}
 		});
 
 		this.undoAndRedo.getUndo().setOnAction(event ->{
-			if(lastAction.canUndo()){
-				lastAction.undo();
-				updateLabels();
-				redrawCanvas();
+			try {
+				//if(lastAction.canUndo()){
+					lastAction.undo();
+					updateLabels();
+					redrawCanvas();
+				//}
+			} catch (NothingToDoException exception) {
+				setErrorAlarm(exception.getMessage());
 			}
 		});
 		//------------------------------------------------------------------------------
@@ -401,6 +415,13 @@ public class PaintPane extends BorderPane {
 		lastAction.saveVersion(lastAct);
 		copiedFormat = null;
 
+	}
+
+	private void setErrorAlarm(String message) {
+		Alert undoRedoAlert = new Alert(Alert.AlertType.ERROR);
+		undoRedoAlert.setTitle(ERROR);
+		undoRedoAlert.setHeaderText(message);
+		undoRedoAlert.showAndWait();
 	}
 
 	private void updateLabels(){

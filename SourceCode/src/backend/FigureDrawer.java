@@ -1,4 +1,6 @@
-package backend.model;
+package backend;
+
+import backend.model.Format;
 
 public interface FigureDrawer {
     void drawRectangle(Format format, double xUpperLeftBound, double yUpperLeftBound, double width, double height);

@@ -1,13 +1,10 @@
-package frontend;
+package frontend.customTools;
 
-import backend.model.FigureDrawer;
+import backend.FigureDrawer;
 import backend.model.Format;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public class FrontFigureDrawer implements FigureDrawer {
     private final GraphicsContext gc;

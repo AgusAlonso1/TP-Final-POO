@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.FigureDrawer;
+
 public class Square extends Rectangle {
 
     public Square(FigureDrawer fg, Format format, Point topLeft, double size) {

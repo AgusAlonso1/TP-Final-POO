@@ -1,4 +1,4 @@
-package backend;
+package backend.customExceptions;
 
 public class NothingToDoException extends RuntimeException{
     public NothingToDoException(String message){

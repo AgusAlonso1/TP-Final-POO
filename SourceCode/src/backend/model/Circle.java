@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.FigureDrawer;
+
 public class Circle extends Ellipse {
     public Circle(FigureDrawer fg, Format format, Point centerPoint, double radius) {
         super(fg, format, centerPoint, radius*2, radius*2);

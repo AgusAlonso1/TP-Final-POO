@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.FigureDrawer;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;

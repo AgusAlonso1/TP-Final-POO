@@ -1,4 +1,4 @@
-package backend.Actions;
+package backend.actions;
 
 import backend.CanvasState;
 import backend.model.FormatFigure;
