@@ -57,4 +57,8 @@ public class Rectangle extends FormatFigure{
         return "Rectangulo";
     }
 
+    @Override
+    public FormatFigure getFigureCopy() {
+        return new Rectangle(getFigureDrawer(),getFormat().getFormatCopy(),topLeft,bottomRight);
+    }
 }

@@ -10,6 +10,7 @@ public abstract class FormatFigure {
     private Format format;
     private final FigureDrawer fg;
     private Set<String> tags = new HashSet<>();
+
     public FormatFigure(FigureDrawer fg,Format format){
         this.fg = fg;
         this.format = format;
@@ -48,5 +49,5 @@ public abstract class FormatFigure {
         return builder.toString();
     }
 
-
+    public abstract FormatFigure getFigureCopy();
 }

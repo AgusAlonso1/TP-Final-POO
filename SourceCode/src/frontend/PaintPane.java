@@ -1,9 +1,10 @@
 package frontend;
 
+import backend.Actions.LastAction;
 import backend.ButtonType;
-import backend.Actions.CanvasAction;
+import backend.Actions.ActionType;
 import backend.CanvasState;
-import backend.Actions.Actions;
+import backend.Actions.ActionManager;
 import backend.model.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ public class PaintPane extends BorderPane {
 	private CanvasState canvasState;
 
 	//Canvas versions -------------------------------------------------------------------------
-	private Actions lastAction;
+	private ActionManager lastAction;
 
 	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
@@ -114,7 +115,7 @@ public class PaintPane extends BorderPane {
 		this.undoAndRedo = undoAndRedo;
 
 		//Actions that occur in the canvas.
-		lastAction = new Actions(canvasState);
+		lastAction = new ActionManager(canvasState);
 
 		//Figure Tags.
 		this.tagsBar = tagsBar;
@@ -171,7 +172,8 @@ public class PaintPane extends BorderPane {
 			currentButton = deleteButton;
 			if (selectedFigure != null) {
 				canvasState.deleteFigure(selectedFigure,selectedLayer);
-				lastAction.saveVersion(CanvasAction.DELETE,selectedFigure,selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.DELETE,selectedFigure,selectedFigure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.addFigure(of,ol), (canvas,of,nf,ol,nl) -> canvas.deleteFigure(of,ol) );
+				lastAction.saveVersion(lastAct);
 				updateLabels();
 				selectedFigure = null;
 				redrawCanvas();
@@ -181,16 +183,22 @@ public class PaintPane extends BorderPane {
 		//Figure format modifier
 		outlinePicker.setOnAction(event -> {
 			if(selectedFigure != null){
+				FormatFigure oldFigure = selectedFigure.getFigureCopy();
 				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
-				lastAction.saveVersion(CanvasAction.CHANGE_BORDER_COLOR,selectedFigure,selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.CHANGE_BORDER_COLOR,oldFigure,selectedFigure,selectedLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()),(canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
 			}
 		});
 		fillPicker.setOnAction(event -> {
 			if(selectedFigure != null){
+				FormatFigure oldFigure = selectedFigure.getFigureCopy();
+				System.out.println("%s, %s".formatted(oldFigure.getFormat(),selectedFigure.getFormat()));
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
-				lastAction.saveVersion(CanvasAction.CHANGE_FILL_COLOR,selectedFigure,selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.CHANGE_FILL_COLOR,oldFigure,selectedFigure,selectedLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()),(canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+				System.out.println("%s, %s".formatted(oldFigure.getFormat(),selectedFigure.getFormat()));
+				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
 			}
@@ -233,7 +241,8 @@ public class PaintPane extends BorderPane {
 			//Move selected figure to new layer.
 			if(selectedFigure != null){
 				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
-				lastAction.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure,selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,selectedFigure,selectedFigure,oldLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.moveFigure(of,nl,ol), (canvas,of,nf,ol,nl) -> canvas.moveFigure(of,ol,nl));
+				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
 			}
@@ -248,7 +257,6 @@ public class PaintPane extends BorderPane {
 				else {
 					selectedLayers.remove(checkBox.getText());
 				}
-				updateLabels();
 				redrawCanvas();
 			});
 		}
@@ -303,8 +311,10 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
 				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				lastAction.saveVersion(CanvasAction.DRAW,newFigure, selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.DRAW,newFigure,newFigure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.deleteFigure(of,ol), (canvas,of,nf,ol,nl) -> canvas.addFigure(of,ol));
+				lastAction.saveVersion(lastAct);
 				lastAction.clearRedo(); //Reset redo versions
+				updateLabels();
 				redrawCanvas(); //Redraw the canvas.
 			}
 		});
@@ -384,8 +394,10 @@ public class PaintPane extends BorderPane {
 		if(copiedFormat == null) {
 			return;
 		}
+		FormatFigure oldFigure = figure.getFigureCopy();
 		figure.setFormat(copiedFormat);
-		lastAction.saveVersion(CanvasAction.COPY_FORMAT, figure, selectedLayer);
+		LastAction lastAct = new LastAction(ActionType.COPY_FORMAT,oldFigure,figure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()), (canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+		lastAction.saveVersion(lastAct);
 		copiedFormat = null;
 
 	}

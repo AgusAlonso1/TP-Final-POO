@@ -62,4 +62,8 @@ public class Ellipse extends FormatFigure {
         return "Elipse";
     }
 
+    @Override
+    public FormatFigure getFigureCopy() {
+        return new Ellipse(getFigureDrawer(),getFormat().getFormatCopy(),centerPoint,sMayorAxis,sMinorAxis);
+    }
 }

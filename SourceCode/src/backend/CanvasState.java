@@ -1,5 +1,6 @@
 package backend;
 
+import backend.model.Format;
 import backend.model.FormatFigure;
 import java.util.*;
 
@@ -43,5 +44,11 @@ public class CanvasState {
             copy.add(figure);
         }
         return copy;
+    }
+
+    public void changeFormat(FormatFigure toChange, String inLayer, Format newFormat) {
+        deleteFigure(toChange,inLayer);
+        toChange.setFormat(newFormat);
+        addFigure(toChange,inLayer);
     }
 }

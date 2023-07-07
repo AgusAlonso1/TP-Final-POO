@@ -7,29 +7,29 @@ import backend.model.FormatFigure;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class Actions {
+public class ActionManager {
     private Deque<LastAction> undoVersions = new LinkedList<>();
     private Deque<LastAction> redoVersions = new LinkedList<>();
 
     private CanvasState canvasState;
 
-    public Actions(CanvasState canvasState){
+    public ActionManager(CanvasState canvasState){
         this.canvasState = canvasState;
     }
 
-    public void saveVersion(CanvasAction action, FormatFigure figure, String layer) {
-        undoVersions.push(new LastAction(action,figure,layer));
+    public void saveVersion(LastAction lastAction) {
+        undoVersions.push(lastAction);
     }
 
     public String lastActionUndo(){
-        if(undoVersions.isEmpty()){
+        if(!canUndo()){
             return "Nothing to undo. %d.".formatted(undoVersions.size());
         }
         return "%s. %d.".formatted(undoVersions.peek().toString(),undoVersions.size());
     }
 
     public String lastActionRedo(){
-        if(redoVersions.isEmpty()){
+        if(!canRedo()){
             return "%d. Nothing to undo".formatted(redoVersions.size());
         }
         return "%d. %s.".formatted(redoVersions.size(), redoVersions.peek().toString());
@@ -39,9 +39,9 @@ public class Actions {
     public void undo() {
         if(!canUndo()){
             throw new NothingToDoException("Nothing to Undo.");
-        }else if(!undoVersions.peek().isModifierActionType()){ //Action type is no a format change
-            canvasState.deleteFigure(undoVersions.peek().getLastActionFigure(),undoVersions.peek().getLastActionLayer());
         }
+        LastAction lastAction = undoVersions.peek();
+        lastAction.getUndoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure(), lastAction.getOldLayer(),lastAction.getNewLayer());
         redoVersions.push(undoVersions.pop());
     }
 
@@ -49,9 +49,9 @@ public class Actions {
     public void redo() {
         if(!canRedo()){
             throw new NothingToDoException("Nothing to Redo.");
-        }else if(!redoVersions.peek().isModifierActionType()) { //Action type is no a format change
-            canvasState.addFigure(redoVersions.peek().getLastActionFigure(), redoVersions.peek().getLastActionLayer());
         }
+        LastAction lastAction = redoVersions.peek();
+        lastAction.getRedoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure(), lastAction.getOldLayer(),lastAction.getNewLayer());
         undoVersions.push(redoVersions.pop());
     }
 

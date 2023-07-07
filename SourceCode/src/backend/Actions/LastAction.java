@@ -1,33 +1,56 @@
 package backend.Actions;
 
-import backend.Actions.CanvasAction;
 import backend.model.FormatFigure;
 
 public class LastAction {
-    private final CanvasAction lastActionType;
-    private final FormatFigure lastActionFigure;
-    private final String lastActionLayer;
+    private ActionType actionType;
+    private FormatFigure newFigure;
+    private FormatFigure oldFigure;
+    private String newLayer;
+    private String oldLayer;
+    private ApplyAction undoAction;
+    private ApplyAction redoAction;
 
-    public LastAction(CanvasAction lastActionType, FormatFigure lastActionFigure, String lastActionLayer) {
-        this.lastActionType = lastActionType;
-        this.lastActionFigure = lastActionFigure;
-        this.lastActionLayer = lastActionLayer;
+    public LastAction(ActionType actionType, FormatFigure oldFigure, FormatFigure newFigure, String oldLayer, String newLayer, ApplyAction undoAction, ApplyAction redoAction) {
+        this.actionType = actionType;
+        this.newFigure = newFigure;
+        this.oldFigure = oldFigure;
+        this.newLayer = newLayer;
+        this.oldLayer = oldLayer;
+        this.undoAction = undoAction;
+        this.redoAction = redoAction;
     }
 
-    public FormatFigure getLastActionFigure(){
-        return lastActionFigure;
+    public ActionType getActionType() {
+        return actionType;
     }
 
-    public String getLastActionLayer(){
-        return lastActionLayer;
+    public FormatFigure getNewFigure() {
+        return newFigure;
     }
 
-    public boolean isModifierActionType(){
-        return lastActionType.isAFormatModifier();
+    public FormatFigure getOldFigure() {
+        return oldFigure;
+    }
+
+    public String getNewLayer() {
+        return newLayer;
+    }
+
+    public String getOldLayer() {
+        return oldLayer;
+    }
+
+    public ApplyAction getUndoAction() {
+        return undoAction;
+    }
+
+    public ApplyAction getRedoAction() {
+        return redoAction;
     }
 
     @Override
     public String toString() {
-        return "%s %s".formatted(lastActionType,lastActionFigure.getShapeName());
+        return "%s %s".formatted(actionType,newFigure.getShapeName());
     }
 }

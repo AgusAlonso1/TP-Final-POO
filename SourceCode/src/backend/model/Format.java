@@ -39,4 +39,13 @@ public class Format {
     public boolean equals(Object other){
         return other == this || (other instanceof Format f && f.fillColor.equals(fillColor) && f.lineColor.equals(lineColor) && f.lineWidth == lineWidth);
     }
+
+    @Override
+    public String toString() {
+        return "%s, %s, %f".formatted(lineColor,fillColor,lineWidth);
+    }
+
+    public Format getFormatCopy() {
+        return new Format(lineColor,fillColor,lineWidth);
+    }
 }
