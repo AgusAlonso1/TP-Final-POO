@@ -30,8 +30,8 @@ public class PaintPane extends BorderPane {
 	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
 	private GraphicsContext gc = canvas.getGraphicsContext2D();
-	private int DEFAULT_LINE_WIDTH = 1;
-	private int BUTTON_MIN_WIDTH = 90;
+	private final int DEFAULT_LINE_WIDTH = 1;
+	private final int BUTTON_MIN_WIDTH = 90;
 
 	// Default value of fill color, line color and line width -------------------------------------------------------------------------
 	private static final Color DEFAULT_LINE_COLOUR = Color.BLACK;
@@ -81,18 +81,19 @@ public class PaintPane extends BorderPane {
 	private List<String> selectedLayers = layerSelector.layersName();
 
 	// Undo and Redo Button -------------------------------------------------------------------------------------
-	private ActionMenu undoAndRedo;
+	private final ActionMenu undoAndRedo;
 
 	private Iterable<FormatFigure> currentFigures;
 
 	//Tag assignment area ---------------------------------------------------------------------------------------
-	private int DEFAULT_ROW_HEIGHT = 4;
-	private TextArea tagTextArea = new TextArea();
+	private final int DEFAULT_ROW_HEIGHT = 4;
+	private final TextArea tagTextArea = new TextArea();
 	private Button saveTagButton = new Button("Guardar");
 	private String activeTag = null;
+	private final String TAG_STRING_DELIMITER = "\s";
 
 	//Tags bar ----------------------------------------------------------------------------------------
-	private TagsBar tagsBar;
+	private final TagsBar tagsBar;
 
 	// Start point for a figure to draw -------------------------------------------------------------------------
 	private Point startPoint;
@@ -148,9 +149,9 @@ public class PaintPane extends BorderPane {
 
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
-		// Add the bottons that manipulate figure.
+		// Add the buttons that manipulate figure.
 		buttonsBox.getChildren().addAll(toolsArr);
-		// Add the bottons that define the format the figure.
+		// Add the buttons that define the format the figure.
 		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox, tagTextArea, saveTagButton);
 		buttonsBox.setPadding(new Insets(5));
 		buttonsBox.setStyle("-fx-background-color: #999");
@@ -228,7 +229,7 @@ public class PaintPane extends BorderPane {
 		saveTagButton.setOnAction(event -> {
 			String undelimitedTags = tagTextArea.getText();
 			if(selectedFigure != null) {
-				selectedFigure.addTags(undelimitedTags.split("\s"));
+				selectedFigure.addTags(undelimitedTags.split(TAG_STRING_DELIMITER));
 			}
 
 		});
