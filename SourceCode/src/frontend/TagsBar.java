@@ -7,7 +7,8 @@ import javafx.scene.layout.HBox;
 import java.util.StringTokenizer;
 
 public class TagsBar extends HBox {
-    private static double SPACING = 10;
+    private final static double SPACING = 10;
+    private final static String TOKENIZER_DELIMITER = " ";
     private RadioButton allTagsButton, specificTagsButton;
     private TextField specificTag;
     public TagsBar() {
@@ -31,7 +32,7 @@ public class TagsBar extends HBox {
         return specificTagsButton;
     }
     public String getSpecificTagText() {
-        StringTokenizer tokenizer = new StringTokenizer(specificTag.getText()," ");
+        StringTokenizer tokenizer = new StringTokenizer(specificTag.getText(),TOKENIZER_DELIMITER);
         return tokenizer.nextToken();
     }
 }
