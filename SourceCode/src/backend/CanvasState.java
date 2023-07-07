@@ -1,10 +1,7 @@
 package backend;
 
 import backend.model.FormatFigure;
-
-import java.text.Normalizer;
 import java.util.*;
-import java.util.concurrent.DelayQueue;
 
 public class CanvasState {
     private final SortedMap<String, List<FormatFigure>> layersMap = new TreeMap<>();
