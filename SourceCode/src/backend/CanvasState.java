@@ -9,37 +9,20 @@ import java.util.concurrent.DelayQueue;
 public class CanvasState {
     private final SortedMap<String, List<FormatFigure>> layersMap = new TreeMap<>();
 
-    private String lastLayerWorked;
-    private FormatFigure lastFigureChanged;
-
     public void addFigure(FormatFigure figure, String layer){
       layersMap.putIfAbsent(layer, new ArrayList<>());
       layersMap.get(layer).add(figure);
-      lastLayerWorked = layer;
-      lastFigureChanged = figure;
      }
 
      public void deleteFigure(FormatFigure figure, String layer){
          layersMap.get(layer).remove(figure);
-         lastLayerWorked = layer;
-         lastFigureChanged = figure;
      }
 
      // Move figure form layers and add to a new one.
      public void moveFigure(FormatFigure figure, String oldLayer, String newLayer){
         deleteFigure(figure,oldLayer);
         addFigure(figure,newLayer);
-         lastLayerWorked = oldLayer;
-         lastFigureChanged = figure;
      }
-
-    public void undoFigureChange(){
-        deleteFigure(lastFigureChanged,lastLayerWorked);
-    }
-
-    public void redoFigureChange(){
-        addFigure(lastFigureChanged,lastLayerWorked);
-    }
 
      //Returns the list of FormatFigures acording to the selected layers in the checkboxes.
      public Iterable<FormatFigure> figures(List<String> selectedLayers) {
