@@ -3,12 +3,12 @@ package backend.model;
 import backend.FigureDrawer;
 
 public class Circle extends Ellipse {
-    public Circle(FigureDrawer fg, Format format, Point centerPoint, double radius) {
-        super(fg, format, centerPoint, radius*2, radius*2);
+    public Circle(FigureDrawer fg, Format format, String layer, Point centerPoint, double radius) {
+        super(fg, format, layer, centerPoint, radius*2, radius*2);
     }
 
-    public Circle(FigureDrawer fg,Format format, Point startPoint, Point endPoint){
-        this(fg, format, startPoint,Math.abs(endPoint.getX() - startPoint.getX()));
+    public Circle(FigureDrawer fg,Format format, String layer, Point startPoint, Point endPoint){
+        this(fg, format, layer, startPoint,Math.abs(endPoint.getX() - startPoint.getX()));
     }
 
     @Override

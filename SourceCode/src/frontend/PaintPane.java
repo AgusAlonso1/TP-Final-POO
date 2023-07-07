@@ -77,7 +77,7 @@ public class PaintPane extends BorderPane {
 	private final ColorPicker fillPicker = new ColorPicker(DEFAULT_FILL_COLOUR);
 
 	//Copy button ----------------------------------------------------------------------------
-	private final ToggleButton copyFormatButton = new ToggleButton("Cop. form");
+	private final EspecifiedToggleButton copyFormatButton = new EspecifiedToggleButton("Cop. form",ButtonType.MISC);
 
 	//Layers Choice Box -------------------------------------------------------------------------
 	private final LayerSelector layerSelector = new LayerSelector();
@@ -181,8 +181,8 @@ public class PaintPane extends BorderPane {
 		deleteButton.setOnAction(event -> {
 			currentButton = deleteButton;
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedFigure,selectedLayer);
-				LastAction lastAct = new LastAction(ActionType.DELETE,selectedFigure,selectedFigure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.addFigure(of,ol), (canvas,of,nf,ol,nl) -> canvas.deleteFigure(of,ol) );
+				canvasState.deleteFigure(selectedFigure);
+				LastAction lastAct = new LastAction(ActionType.DELETE,selectedFigure,selectedFigure,(canvas,of,nf) -> canvas.addFigure(of) , (canvas,of,nf) -> canvas.deleteFigure(of) );
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				selectedFigure = null;
@@ -195,7 +195,7 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				FormatFigure oldFigure = selectedFigure.getFigureCopy();
 				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
-				LastAction lastAct = new LastAction(ActionType.CHANGE_BORDER_COLOR,oldFigure,selectedFigure,selectedLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()),(canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+				LastAction lastAct = new LastAction(ActionType.CHANGE_BORDER_COLOR,oldFigure,selectedFigure,(canvas,of,nf) -> canvas.changeFormat(nf,of.getFormat()),(canvas,of,nf) -> canvas.changeFormat(of,nf.getFormat()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -205,7 +205,7 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				FormatFigure oldFigure = selectedFigure.getFigureCopy();
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
-				LastAction lastAct = new LastAction(ActionType.CHANGE_FILL_COLOR,oldFigure,selectedFigure,selectedLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()),(canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+				LastAction lastAct = new LastAction(ActionType.CHANGE_FILL_COLOR,oldFigure,selectedFigure,(canvas,of,nf) -> canvas.changeFormat(nf,of.getFormat()),(canvas,of,nf) -> canvas.changeFormat(of,nf.getFormat()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -243,12 +243,12 @@ public class PaintPane extends BorderPane {
 
 		//Gets the layer user is working on.
 		layersChoiceBox.setOnAction(event -> {
-			String oldLayer = selectedLayer;
 			selectedLayer = layersChoiceBox.getValue();
 			//Move selected figure to new layer.
 			if(selectedFigure != null){
-				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
-				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,selectedFigure,selectedFigure,oldLayer,selectedLayer,(canvas,of,nf,ol,nl) -> canvas.moveFigure(of,nl,ol), (canvas,of,nf,ol,nl) -> canvas.moveFigure(of,ol,nl));
+				FormatFigure copyFigure = selectedFigure.getFigureCopy();
+				canvasState.moveFigure(selectedFigure,selectedLayer);
+				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,copyFigure,selectedFigure, (canvas,of,nf) -> canvas.moveFigure(nf,of.getLayer()), (canvas,of,nf) -> canvas.moveFigure(of,nf.getLayer()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -271,6 +271,7 @@ public class PaintPane extends BorderPane {
 
 		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format
 		copyFormatButton.setOnAction(event -> {
+			currentButton = copyFormatButton;
 			if(selectedFigure == null) {
 				statusPane.updateStatus("Ninguna figura seleccionada");
 			}
@@ -323,10 +324,10 @@ public class PaintPane extends BorderPane {
 			FormatFigure newFigure = null;
 			if (currentButton.isAFigureButton()) {
 				//Get the corresponding figure of the button toggled.
-				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
-				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
+				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()),selectedLayer, startPoint, endPoint);
+				canvasState.addFigure(newFigure); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				LastAction lastAct = new LastAction(ActionType.DRAW,newFigure,newFigure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.deleteFigure(of,ol), (canvas,of,nf,ol,nl) -> canvas.addFigure(of,ol));
+				LastAction lastAct = new LastAction(ActionType.DRAW,newFigure,newFigure, (canvas,of,nf) -> canvas.deleteFigure(of), (canvas,of,nf) -> canvas.addFigure(of));
 				lastAction.saveVersion(lastAct);
 				lastAction.clearRedo(); //Reset redo versions
 				updateLabels();
@@ -411,7 +412,7 @@ public class PaintPane extends BorderPane {
 		}
 		FormatFigure oldFigure = figure.getFigureCopy();
 		figure.setFormat(copiedFormat);
-		LastAction lastAct = new LastAction(ActionType.COPY_FORMAT,oldFigure,figure,selectedLayer,selectedLayer, (canvas,of,nf,ol,nl) -> canvas.changeFormat(nf,ol,of.getFormat()), (canvas,of,nf,ol,nl) -> canvas.changeFormat(of,ol,nf.getFormat()));
+		LastAction lastAct = new LastAction(ActionType.COPY_FORMAT,oldFigure,figure, (canvas,of,nf) -> canvas.changeFormat(nf,of.getFormat()), (canvas,of,nf) -> canvas.changeFormat(of,nf.getFormat()));
 		lastAction.saveVersion(lastAct);
 		copiedFormat = null;
 

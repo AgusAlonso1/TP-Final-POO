@@ -8,15 +8,15 @@ public class Ellipse extends FormatFigure {
     protected final double sMayorAxis, sMinorAxis;
 
     //sMayorAxis and sMinorAxis are the diameters.
-    public Ellipse(FigureDrawer fg, Format format, Point centerPoint, double sMayorAxis, double sMinorAxis) {
-        super(fg, format);
+    public Ellipse(FigureDrawer fg, Format format, String layer, Point centerPoint, double sMayorAxis, double sMinorAxis) {
+        super(fg, format, layer);
         this.centerPoint = centerPoint;
         this.sMayorAxis = sMayorAxis;
         this.sMinorAxis = sMinorAxis;
     }
 
-    public Ellipse(FigureDrawer fg, Format format, Point startPoint,Point endPoint) {
-        this(fg, format, new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
+    public Ellipse(FigureDrawer fg, Format format, String layer, Point startPoint,Point endPoint) {
+        this(fg, format,layer, new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2)),Math.abs(endPoint.getX() - startPoint.getX()), Math.abs(endPoint.getY() - startPoint.getY()));
     }
 
     @Override
@@ -66,6 +66,6 @@ public class Ellipse extends FormatFigure {
 
     @Override
     public FormatFigure getFigureCopy() {
-        return new Ellipse(getFigureDrawer(),getFormat().getFormatCopy(),centerPoint,sMayorAxis,sMinorAxis);
+        return new Ellipse(getFigureDrawer(),getFormat().getFormatCopy(),getLayer(),centerPoint,sMayorAxis,sMinorAxis);
     }
 }

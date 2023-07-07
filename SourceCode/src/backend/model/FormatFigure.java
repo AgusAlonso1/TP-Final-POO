@@ -11,11 +11,13 @@ public abstract class FormatFigure {
 
     private Format format;
     private final FigureDrawer fg;
+    private String layer;
     private Set<String> tags = new HashSet<>();
 
-    public FormatFigure(FigureDrawer fg,Format format){
+    public FormatFigure(FigureDrawer fg,Format format, String layer){
         this.fg = fg;
         this.format = format;
+        this.layer = layer;
     }
     public abstract boolean pointIsIn(Point point);
     public abstract void moveFigure(double diffX, double diffY);
@@ -31,6 +33,12 @@ public abstract class FormatFigure {
     protected abstract void drawFigureWithFormat(Format format);
     protected FigureDrawer getFigureDrawer() {
         return fg;
+    }
+    public String getLayer() {
+        return layer;
+    }
+    public void changeLayer(String newLayer) {
+        this.layer = newLayer;
     }
     public Format getFormat() {
         return format;

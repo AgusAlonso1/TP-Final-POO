@@ -6,8 +6,8 @@ public class Rectangle extends FormatFigure{
 
     private final Point topLeft, bottomRight;
 
-    public Rectangle(FigureDrawer fg, Format format, Point topLeft, Point bottomRight) {
-        super(fg, format);
+    public Rectangle(FigureDrawer fg, Format format, String layer, Point topLeft, Point bottomRight) {
+        super(fg, format, layer);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }
@@ -61,6 +61,6 @@ public class Rectangle extends FormatFigure{
 
     @Override
     public FormatFigure getFigureCopy() {
-        return new Rectangle(getFigureDrawer(),getFormat().getFormatCopy(),topLeft,bottomRight);
+        return new Rectangle(getFigureDrawer(),getFormat().getFormatCopy(), getLayer(),topLeft,bottomRight);
     }
 }

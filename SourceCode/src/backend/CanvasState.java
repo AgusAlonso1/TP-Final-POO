@@ -7,19 +7,21 @@ import java.util.*;
 public class CanvasState {
     private final SortedMap<String, List<FormatFigure>> layersMap = new TreeMap<>();
 
-    public void addFigure(FormatFigure figure, String layer){
-      layersMap.putIfAbsent(layer, new ArrayList<>());
-      layersMap.get(layer).add(figure);
+    public void addFigure(FormatFigure figure){
+      String currentLayer = figure.getLayer();
+      layersMap.putIfAbsent(currentLayer, new ArrayList<>());
+      layersMap.get(currentLayer).add(figure);
      }
 
-     public void deleteFigure(FormatFigure figure, String layer){
-         layersMap.get(layer).remove(figure);
+     public void deleteFigure(FormatFigure figure){
+         layersMap.get(figure.getLayer()).remove(figure);
      }
 
      // Move figure form layers and add to a new one.
-     public void moveFigure(FormatFigure figure, String oldLayer, String newLayer){
-        deleteFigure(figure,oldLayer);
-        addFigure(figure,newLayer);
+     public void moveFigure(FormatFigure figure, String newLayer){
+        deleteFigure(figure);
+        figure.changeLayer(newLayer);
+        addFigure(figure);
      }
 
      //Returns the list of FormatFigures acording to the selected layers in the checkboxes.
@@ -38,10 +40,10 @@ public class CanvasState {
         return layersMap.getOrDefault(layer, new ArrayList<>());
     }
 
-    public void changeFormat(FormatFigure toChange, String inLayer, Format newFormat) {
+    public void changeFormat(FormatFigure toChange, Format newFormat) {
         FormatFigure figureCopy = toChange.getFigureCopy(); //Copy to avoid losing the reference to the current format.
-        deleteFigure(toChange,inLayer);
+        deleteFigure(toChange);
         figureCopy.setFormat(newFormat);
-        addFigure(figureCopy,inLayer);
+        addFigure(figureCopy);
     }
 }

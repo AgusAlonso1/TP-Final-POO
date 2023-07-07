@@ -15,11 +15,11 @@ public class EspecifiedToggleButton extends ToggleButton { //Class which adds di
         this.type = type;
     }
 
-    public FormatFigure getFigure(FigureDrawer fg, Format format, Point firstPoint, Point secondPoint) {
+    public FormatFigure getFigure(FigureDrawer fg, Format format, String layer, Point firstPoint, Point secondPoint) {
         if (!type.isAFigureType()) {
             throw new IllegalArgumentException("Button type cannot create a figure.");
         }
-        return type.buildFigure(fg, format, firstPoint,secondPoint);
+        return type.buildFigure(fg, format, layer, firstPoint, secondPoint);
     }
 
     public boolean isAFigureButton() {

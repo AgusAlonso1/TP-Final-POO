@@ -40,7 +40,7 @@ public class ActionManager {
             throw new NothingToDoException("Nothing to Undo.");
         }
         LastAction lastAction = undoVersions.peek();
-        lastAction.getUndoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure(), lastAction.getOldLayer(),lastAction.getNewLayer());
+        lastAction.getUndoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure());
         redoVersions.push(undoVersions.pop());
     }
 
@@ -50,7 +50,7 @@ public class ActionManager {
             throw new NothingToDoException("Nothing to Redo.");
         }
         LastAction lastAction = redoVersions.peek();
-        lastAction.getRedoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure(), lastAction.getOldLayer(),lastAction.getNewLayer());
+        lastAction.getRedoAction().applyAction(canvasState, lastAction.getOldFigure(), lastAction.getNewFigure());
         undoVersions.push(redoVersions.pop());
     }
 
