@@ -1,9 +1,9 @@
 package frontend;
 
 import backend.ButtonType;
-import backend.CanvasAction;
+import backend.Actions.CanvasAction;
 import backend.CanvasState;
-import backend.CanvasVersions;
+import backend.Actions.Actions;
 import backend.model.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,7 +16,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class PaintPane extends BorderPane {
@@ -25,7 +24,7 @@ public class PaintPane extends BorderPane {
 	private CanvasState canvasState;
 
 	//Canvas versions -------------------------------------------------------------------------
-	private CanvasVersions canvasVersions = new CanvasVersions();
+	private Actions lastAction;
 
 	// Canvas and related -------------------------------------------------------------------------
 	private Canvas canvas = new Canvas(800, 600);
@@ -75,7 +74,7 @@ public class PaintPane extends BorderPane {
 	private ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerSelector.layersName()));
 
 	// Layer in which user is working on -------------------------------------------------------------------------
-	private String selectedLayer;
+	private String selectedLayer = "Layer 1 "; //default layer
 
 	// Layers that are selected -------------------------------------------------------------------------
 	private List<String> selectedLayers = layerSelector.layersName();
@@ -113,6 +112,11 @@ public class PaintPane extends BorderPane {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.undoAndRedo = undoAndRedo;
+
+		//Actions that occur in the canvas.
+		lastAction = new Actions(canvasState);
+
+		//Figure Tags.
 		this.tagsBar = tagsBar;
 		updateLabels();
 
@@ -167,7 +171,7 @@ public class PaintPane extends BorderPane {
 			currentButton = deleteButton;
 			if (selectedFigure != null) {
 				canvasState.deleteFigure(selectedFigure,selectedLayer);
-				canvasVersions.saveVersion(CanvasAction.DELETE,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				lastAction.saveVersion(CanvasAction.DELETE,selectedFigure,selectedLayer);
 				updateLabels();
 				selectedFigure = null;
 				redrawCanvas();
@@ -178,7 +182,7 @@ public class PaintPane extends BorderPane {
 		outlinePicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setLineColor(outlinePicker.getValue().toString());
-				canvasVersions.saveVersion(CanvasAction.CHANGE_BORDER_COLOR,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				lastAction.saveVersion(CanvasAction.CHANGE_BORDER_COLOR,selectedFigure,selectedLayer);
 				updateLabels();
 				redrawCanvas();
 			}
@@ -186,7 +190,7 @@ public class PaintPane extends BorderPane {
 		fillPicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				selectedFigure.getFormat().setFillColor(fillPicker.getValue().toString());
-				canvasVersions.saveVersion(CanvasAction.CHANGE_FILL_COLOR,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				lastAction.saveVersion(CanvasAction.CHANGE_FILL_COLOR,selectedFigure,selectedLayer);
 				updateLabels();
 				redrawCanvas();
 			}
@@ -229,7 +233,7 @@ public class PaintPane extends BorderPane {
 			//Move selected figure to new layer.
 			if(selectedFigure != null){
 				canvasState.moveFigure(selectedFigure,oldLayer,selectedLayer);
-				canvasVersions.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure.getShapeName(),canvasState.getFiguresCopy(selectedLayers));
+				lastAction.saveVersion(CanvasAction.CHANGE_LAYER,selectedFigure,selectedLayer);
 				updateLabels();
 				redrawCanvas();
 			}
@@ -262,18 +266,16 @@ public class PaintPane extends BorderPane {
 
 		// Undo and redo button actions
 		this.undoAndRedo.getRedo().setOnAction(event ->{
-			if(canvasVersions.canRedo()){
-				canvasVersions.redo();
-				canvasState.redoFigureChange();
+			if(lastAction.canRedo()){
+				lastAction.redo();
 				updateLabels();
 				redrawCanvas();
 			}
 		});
 
 		this.undoAndRedo.getUndo().setOnAction(event ->{
-			if(canvasVersions.canUndo()){
-				canvasVersions.undo();
-				canvasState.undoFigureChange();
+			if(lastAction.canUndo()){
+				lastAction.undo();
 				updateLabels();
 				redrawCanvas();
 			}
@@ -301,8 +303,8 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()), startPoint, endPoint);
 				canvasState.addFigure(newFigure, selectedLayer); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				canvasVersions.saveVersion(CanvasAction.DRAW,newFigure.getShapeName(), canvasState.getFiguresCopy(selectedLayers));
-				canvasVersions.clearRedo(); //Reset redo versions
+				lastAction.saveVersion(CanvasAction.DRAW,newFigure, selectedLayer);
+				lastAction.clearRedo(); //Reset redo versions
 				redrawCanvas(); //Redraw the canvas.
 			}
 		});
@@ -355,7 +357,6 @@ public class PaintPane extends BorderPane {
 	// Draws the shapes
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		currentFigures = canvasVersions.getCurrentVersion();
 		for (FormatFigure figure : canvasState.figures(selectedLayers)) {
 			if (selectedFigure == figure && shouldDrawByTag(figure)) {
 				figure.drawFigure(SELECTED_LINE_COLOR_HX);
@@ -384,13 +385,13 @@ public class PaintPane extends BorderPane {
 			return;
 		}
 		figure.setFormat(copiedFormat);
-		canvasVersions.saveVersion(CanvasAction.COPY_FORMAT, figure.getShapeName(), canvasState.getFiguresCopy(selectedLayers));
+		lastAction.saveVersion(CanvasAction.COPY_FORMAT, figure, selectedLayer);
 		copiedFormat = null;
 
 	}
 
 	private void updateLabels(){
-		undoAndRedo.setUndoLabel(canvasVersions.lastActionUndo());
-		undoAndRedo.setRedoLabel(canvasVersions.lastActionRedo());
+		undoAndRedo.setUndoLabel(lastAction.lastActionUndo());
+		undoAndRedo.setRedoLabel(lastAction.lastActionRedo());
 	}
 }

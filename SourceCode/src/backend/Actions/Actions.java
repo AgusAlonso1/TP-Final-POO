@@ -1,25 +1,24 @@
-package backend;
+package backend.Actions;
 
+import backend.CanvasState;
+import backend.NothingToDoException;
 import backend.model.FormatFigure;
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class CanvasVersions {
-    private Deque<CanvasSnapshot> undoVersions = new LinkedList<>();
-    private Deque<CanvasSnapshot> redoVersions = new LinkedList<>();
+public class Actions {
+    private Deque<LastAction> undoVersions = new LinkedList<>();
+    private Deque<LastAction> redoVersions = new LinkedList<>();
 
-    public Iterable<FormatFigure> getCurrentVersion() {
-        if(!canUndo()){//canvas is clear
-            System.out.println("entro al if");
-            return new ArrayList<>();
-        }
-        return undoVersions.peek().getCanvasSnapshot();
+    private CanvasState canvasState;
+
+    public Actions(CanvasState canvasState){
+        this.canvasState = canvasState;
     }
 
-    public void saveVersion(CanvasAction action, String figureName, Iterable<FormatFigure> snapshot) {
-        undoVersions.push(new CanvasSnapshot(action,figureName,snapshot));
+    public void saveVersion(CanvasAction action, FormatFigure figure, String layer) {
+        undoVersions.push(new LastAction(action,figure,layer));
     }
 
     public String lastActionUndo(){
@@ -36,19 +35,22 @@ public class CanvasVersions {
         return "%d. %s.".formatted(redoVersions.size(), redoVersions.peek().toString());
     }
 
+    //Undo action deletes the last action done by the canvas.
     public void undo() {
         if(!canUndo()){
             throw new NothingToDoException("Nothing to Undo.");
         }
+        canvasState.deleteFigure(undoVersions.peek().getLastActionFigure(),undoVersions.peek().getLastActionLayer());
         redoVersions.push(undoVersions.pop());
     }
 
+    //Redo action readds the last action done by the canvas.
     public void redo() {
         if(!canRedo()){
             throw new NothingToDoException("Nothing to Redo.");
         }
+        canvasState.addFigure(redoVersions.peek().getLastActionFigure(),redoVersions.peek().getLastActionLayer());
         undoVersions.push(redoVersions.pop());
-
     }
 
     public void clearRedo(){

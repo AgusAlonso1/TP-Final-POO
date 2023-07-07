@@ -1,4 +1,4 @@
-package backend;
+package backend.Actions;
 
 public enum CanvasAction {
     DRAW("Dibujar"),
