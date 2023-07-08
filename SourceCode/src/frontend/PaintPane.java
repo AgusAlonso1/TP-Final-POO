@@ -39,7 +39,7 @@ public class PaintPane extends BorderPane {
 	private static final int DEFAULT_LINE_WIDTH = 1;
 	private static final int BUTTON_MIN_WIDTH = 90;
 
-	//Error alert contants
+	//Error alert contants --------------------------------------------------------------------------------
 	private static final String ERROR = "ERROR";
 
 	// Default value of fill color, line color and line width -------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public class PaintPane extends BorderPane {
 	private final EspecifiedToggleButton ellipseButton = new EspecifiedToggleButton("Elipse", ButtonType.ELLIPSE);
 	private final EspecifiedToggleButton deleteButton = new EspecifiedToggleButton("Borrar", ButtonType.MISC);
 
-	// Selected figure -------------------------------------------------------------------------
+	// Figure that is selected on the canvas by the user  -------------------------------------------------------------------------
 	private FormatFigure selectedFigure;
 
 	// Format Outline Constants -------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public class PaintPane extends BorderPane {
 	//Copy button ----------------------------------------------------------------------------
 	private final EspecifiedToggleButton copyFormatButton = new EspecifiedToggleButton("Cop. form",ButtonType.MISC);
 
-	//Layers Choice Box -------------------------------------------------------------------------
+	//Layers Choice Box button -------------------------------------------------------------------------
 	private final LayerSelector layerSelector = new LayerSelector();
 	private ChoiceBox<String> layersChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(layerSelector.layersName()));
 
@@ -92,24 +92,25 @@ public class PaintPane extends BorderPane {
 	// Undo and Redo Button -------------------------------------------------------------------------------------
 	private final ActionMenu undoAndRedo;
 
-	private Iterable<FormatFigure> currentFigures;
-
-	//Tag assignment area ---------------------------------------------------------------------------------------
+	//Figure tag constants  ---------------------------------------------------------------------------------------
 	private static final int DEFAULT_ROW_HEIGHT = 4;
-	private final TextArea tagTextArea = new TextArea();
-	private final Button saveTagButton = new Button("Guardar");
 	private String activeTag = null;
 	private static final String TAG_STRING_DELIMITER = "\s";
 
-	//Tags bar ----------------------------------------------------------------------------------------
+	// Figure tag button --------------------------------------------------------------------------------------
+	private final TextArea tagTextArea = new TextArea();
+	private final Button saveTagButton = new Button("Guardar");
+
+	//Figure Tags bar ----------------------------------------------------------------------------------------
 	private final TagsBar tagsBar;
 
-	// Start point for a figure to draw -------------------------------------------------------------------------
+	// Starting point to draw a figure -------------------------------------------------------------------------
 	private Point startPoint;
 
 	// StatusBar -------------------------------------------------------------------------
 	private StatusPane statusPane;
 
+	// CopyFormat variable to see current format selected by user ----------------------------------------------------------
 	private Format copiedFormat = null;
 
 	//Current toggled button, default is set to the selection button -------------------------------------------------------------------------
@@ -120,6 +121,7 @@ public class PaintPane extends BorderPane {
 		VBox canvasAndLayers = new VBox();
 		canvasAndLayers.getChildren().addAll(canvas,layerSelector);
 
+		//CanvasState, StatusPane, and ActionMenu are saved.
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.undoAndRedo = undoAndRedo;
@@ -131,6 +133,7 @@ public class PaintPane extends BorderPane {
 		this.tagsBar = tagsBar;
 		updateLabels();
 
+		//Array with the buttons that create figures and allow possible changes (select and delete).
 		EspecifiedToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 
@@ -158,8 +161,10 @@ public class PaintPane extends BorderPane {
 
 		//Adding of all buttons of side-bar.
 		VBox buttonsBox = new VBox(10);
+
 		// Add the buttons that manipulate figure.
 		buttonsBox.getChildren().addAll(toolsArr);
+
 		// Add the buttons that define the format the figure.
 		buttonsBox.getChildren().addAll(copyFormatButton, outline, outlineSlider, outlinePicker, fill, fillPicker, layersChoiceBox, tagTextArea, saveTagButton);
 		buttonsBox.setPadding(new Insets(5));
@@ -169,15 +174,17 @@ public class PaintPane extends BorderPane {
 
 		//Set on action of the buttons ------------------------------------------------------------------------------
 		//When a specific button is pressed the "currentButton" field is updated.
+
+		//Buttons to create figures.
 		rectangleButton.setOnAction(event -> currentButton = rectangleButton);
 		squareButton.setOnAction(event -> currentButton = squareButton);
 		ellipseButton.setOnAction(event -> currentButton = ellipseButton);
 		circleButton.setOnAction(event -> currentButton = circleButton);
 
-		//Selected button actions
+		//Buttons to select figures.
 		selectionButton.setOnAction(event -> currentButton = selectionButton);
 
-		//Delete button actions
+		//Button to delete figure. Only if the figure is selected can the user delete.
 		deleteButton.setOnAction(event -> {
 			currentButton = deleteButton;
 			if (selectedFigure != null) {
@@ -190,7 +197,8 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		//Figure format modifier
+		//Figure format modifiers.
+		// Allow user to modify the fill and border color as well as allowing the to change the width.
 		outlinePicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				FormatFigure oldFigure = selectedFigure.getFigureCopy();
@@ -201,6 +209,7 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
 		fillPicker.setOnAction(event -> {
 			if(selectedFigure != null){
 				FormatFigure oldFigure = selectedFigure.getFigureCopy();
@@ -211,6 +220,7 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
 		outlineSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
 			if(selectedFigure != null) {
 				selectedFigure.getFormat().setLineWidth(new_val.doubleValue());
@@ -218,7 +228,8 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		//Logic linked to tag saver and tag text area
+		//Figure tag assigner.
+		// Logic linked to tag saver and tag text area
 		tagTextArea.setWrapText(true);
 		tagTextArea.setPrefRowCount(DEFAULT_ROW_HEIGHT);
 		this.tagsBar.getAllTagsButton().setOnAction(event -> {
@@ -227,12 +238,14 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
 		this.tagsBar.getSpecificTagsButton().setOnAction(event -> {
 			if(tagsBar.getSpecificTagsButton().isSelected()) {
 				activeTag = tagsBar.getSpecificTagText();
 				redrawCanvas();
 			}
 		});
+
 		saveTagButton.setOnAction(event -> {
 			String undelimitedTags = tagTextArea.getText();
 			if(selectedFigure != null) {
@@ -241,14 +254,14 @@ public class PaintPane extends BorderPane {
 		});
 
 
-		//Gets the layer user is working on.
+		//Gets the layer the user is working on.
 		layersChoiceBox.setOnAction(event -> {
 			selectedLayer = layersChoiceBox.getValue();
 			//Move selected figure to new layer.
 			if(selectedFigure != null){
 				FormatFigure copyFigure = selectedFigure.getFigureCopy();
 				canvasState.moveFigure(selectedFigure,selectedLayer);
-				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,copyFigure,selectedFigure, (canvas,of,nf) -> canvas.moveFigure(nf,of.getLayer()), (canvas,of,nf) -> canvas.moveFigure(of,nf.getLayer()));
+				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,copyFigure,selectedFigure, (canvas,oldFormat,newFormat) -> canvas.moveFigure(oldFormat,newFormat.getLayer()), (canvas,oldFormat,newFormat) -> canvas.moveFigure(oldFormat,newFormat.getLayer()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -256,6 +269,7 @@ public class PaintPane extends BorderPane {
 		});
 
 		// Action of the checkbox modifies the view of the paintPane.
+		// Depending on the layers that are selected the corresponding figures will be shown.
 		for (CheckBox checkBox : layerSelector.getLayers()) {
 			checkBox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
 				if(ov.getValue()) {
@@ -268,8 +282,8 @@ public class PaintPane extends BorderPane {
 			});
 		}
 
-
-		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format
+		//CopiedFormat Button.
+		//When CopyFormatButton is pressed the variable copiedFormat is updated to the selected figure's format.
 		copyFormatButton.setOnAction(event -> {
 			currentButton = copyFormatButton;
 			if(selectedFigure == null) {
@@ -280,7 +294,7 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		// Undo and redo button actions
+		// Undo and redo button actions.
 		this.undoAndRedo.getRedo().setOnAction(event ->{
 			try {
 				//if(lastAction.canRedo()){
