@@ -194,6 +194,8 @@ public class PaintPane extends BorderPane {
 				updateLabels();
 				selectedFigure = null;
 				redrawCanvas();
+			} else {
+				statusPane.updateStatus("No se selecciono ninguna figura, no se puede eliminar");
 			}
 		});
 
@@ -208,6 +210,8 @@ public class PaintPane extends BorderPane {
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
+			}else {
+				statusPane.updateStatus("No se selecciono ninguna figura, no se puede cambiar el borde");
 			}
 		});
 
@@ -220,6 +224,8 @@ public class PaintPane extends BorderPane {
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
+			}else {
+				statusPane.updateStatus("No se selecciono ninguna figura, no se puede cambiar relleno");
 			}
 		});
 
@@ -227,6 +233,8 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null) {
 				selectedFigure.getFormat().setLineWidth(new_val.doubleValue());
 				redrawCanvas();
+			}else {
+				statusPane.updateStatus("No se selecciono ninguna figura, no se puede cambiar el ancho del borde");
 			}
 		});
 
@@ -252,6 +260,8 @@ public class PaintPane extends BorderPane {
 			String undelimitedTags = tagTextArea.getText();
 			if(selectedFigure != null) {
 				selectedFigure.addTags(undelimitedTags.split(TAG_STRING_DELIMITER));
+			}else {
+				statusPane.updateStatus("No se selecciono ninguna figura, no se puede asignar etiqueta");
 			}
 		});
 
@@ -289,7 +299,7 @@ public class PaintPane extends BorderPane {
 		copyFormatButton.setOnAction(event -> {
 			currentButton = copyFormatButton;
 			if(selectedFigure == null) {
-				statusPane.updateStatus("Ninguna figura seleccionada");
+				statusPane.updateStatus("Ninguna figura seleccionada, no se puede copiar formato");
 			}
 			else {
 				copiedFormat = selectedFigure.getFormat();
@@ -299,11 +309,9 @@ public class PaintPane extends BorderPane {
 		// Undo and redo button actions.
 		this.undoAndRedo.getRedo().setOnAction(event ->{
 			try {
-				//if(lastAction.canRedo()){
-					lastAction.redo();
-					updateLabels();
-					redrawCanvas();
-				//}
+				lastAction.redo();
+				updateLabels();
+				redrawCanvas();
 			} catch(NothingToDoException exception) {
 				setErrorAlarm(exception.getMessage());
 			}
@@ -311,11 +319,9 @@ public class PaintPane extends BorderPane {
 
 		this.undoAndRedo.getUndo().setOnAction(event ->{
 			try {
-				//if(lastAction.canUndo()){
-					lastAction.undo();
-					updateLabels();
-					redrawCanvas();
-				//}
+				lastAction.undo();
+				updateLabels();
+				redrawCanvas();
 			} catch (NothingToDoException exception) {
 				setErrorAlarm(exception.getMessage());
 			}

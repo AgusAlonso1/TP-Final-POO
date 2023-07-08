@@ -17,6 +17,10 @@ public class LastAction {
         this.redoAction = redoAction;
     }
 
+    public ActionType getActionType(){
+        return actionType;
+    }
+
     public FormatFigure getNewFigure() {
         return newFigure;
     }
