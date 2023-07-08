@@ -35,10 +35,6 @@ public class Format {
         this.lineWidth = lineWidth;
     }
 
-    @Override
-    public boolean equals(Object other){
-        return other == this || (other instanceof Format f && f.fillColor.equals(fillColor) && f.lineColor.equals(lineColor) && f.lineWidth == lineWidth);
-    }
 
     @Override
     public String toString() {

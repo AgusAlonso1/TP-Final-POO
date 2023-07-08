@@ -10,7 +10,7 @@ public class CanvasState {
     public void addFigure(FormatFigure figure){
       String currentLayer = figure.getLayer();
       layersMap.putIfAbsent(currentLayer, new ArrayList<>());
-      layersMap.get(currentLayer).add(figure);
+      layersMap.get(figure.getLayer()).add(figure);
      }
 
      public void deleteFigure(FormatFigure figure){

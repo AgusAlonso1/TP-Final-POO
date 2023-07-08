@@ -51,7 +51,7 @@ public class Rectangle extends FormatFigure{
     }
     @Override
     public boolean equals(Object other){
-        return this == other || (other instanceof Rectangle r && r.bottomRight.equals(bottomRight) && r.topLeft.equals(topLeft) && r.getFormat().equals(this.getFormat()));
+        return this == other || (other instanceof Rectangle r && r.bottomRight.equals(bottomRight) && r.topLeft.equals(topLeft));
     }
 
     @Override

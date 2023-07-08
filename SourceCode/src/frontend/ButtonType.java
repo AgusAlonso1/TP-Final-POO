@@ -1,11 +1,12 @@
-package backend;
+package frontend;
 
+import backend.FigureDrawer;
 import backend.model.*;
 
 public enum ButtonType { //Enun to diferentiate button types.
     RECTANGLE {
         @Override
-        public FormatFigure buildFigure(FigureDrawer fg,Format format, String layer, Point firstPoint, Point secondPoint) {
+        public FormatFigure buildFigure(FigureDrawer fg, Format format, String layer, Point firstPoint, Point secondPoint) {
             return new Rectangle(fg, format,layer,firstPoint,secondPoint);
         }
     },

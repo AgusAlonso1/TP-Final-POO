@@ -1,6 +1,6 @@
 package frontend.customTools;
 
-import backend.ButtonType;
+import frontend.ButtonType;
 import backend.FigureDrawer;
 import backend.model.Format;
 import backend.model.FormatFigure;

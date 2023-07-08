@@ -56,7 +56,7 @@ public class Ellipse extends FormatFigure {
     }
     @Override
     public boolean equals(Object other){
-        return this == other || (other instanceof Ellipse e && e.centerPoint.equals(centerPoint) && e.sMayorAxis == sMayorAxis && e.sMinorAxis == sMinorAxis && e.getFormat().equals(getFormat()));
+        return this == other || (other instanceof Ellipse e && e.centerPoint.equals(centerPoint) && e.sMayorAxis == sMayorAxis && e.sMinorAxis == sMinorAxis);
     }
 
     @Override
