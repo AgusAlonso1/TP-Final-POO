@@ -3,11 +3,11 @@ package backend.actions;
 import backend.model.FormatFigure;
 
 public class LastAction {
-    private ActionType actionType;
-    private FormatFigure newFigure;
-    private FormatFigure oldFigure;
-    private ApplyAction undoAction;
-    private ApplyAction redoAction;
+    private final ActionType actionType;
+    private final FormatFigure newFigure;
+    private final FormatFigure oldFigure;
+    private final ApplyAction undoAction;
+    private final ApplyAction redoAction;
 
     public LastAction(ActionType actionType, FormatFigure oldFigure, FormatFigure newFigure, ApplyAction undoAction, ApplyAction redoAction) {
         this.actionType = actionType;
@@ -15,10 +15,6 @@ public class LastAction {
         this.oldFigure = oldFigure;
         this.undoAction = undoAction;
         this.redoAction = redoAction;
-    }
-
-    public ActionType getActionType(){
-        return actionType;
     }
 
     public FormatFigure getNewFigure() {

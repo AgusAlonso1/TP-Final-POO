@@ -273,7 +273,8 @@ public class PaintPane extends BorderPane {
 			if(selectedFigure != null){
 				FormatFigure copyFigure = selectedFigure.getFigureCopy();
 				canvasState.moveFigure(selectedFigure,selectedLayer);
-				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,copyFigure,selectedFigure, (canvas,oldFigure,newFigure) -> canvas.moveFigure(newFigure, oldFigure.getLayer()), (canvas,oldFigure,newFigure) -> canvas.moveFigure(oldFigure,newFigure.getLayer()));
+				//oldFig represent old figure and newFig represent new figure after the action has been executed in lambda expression.
+				LastAction lastAct = new LastAction(ActionType.CHANGE_LAYER,copyFigure,selectedFigure, (canvas,oldFig,newFig) -> canvas.moveFigure(newFig, oldFig.getLayer()), (canvas,oldFig,newFig) -> canvas.moveFigure(oldFig,newFig.getLayer()));
 				lastAction.saveVersion(lastAct);
 				updateLabels();
 				redrawCanvas();
@@ -349,7 +350,8 @@ public class PaintPane extends BorderPane {
 				newFigure = currentButton.getFigure(new FrontFigureDrawer(gc), new Format(currentFormat.getLineColor(), currentFormat.getFillColor(), currentFormat.getLineWidth()),selectedLayer, startPoint, endPoint);
 				canvasState.addFigure(newFigure); //Added figure to the back-end trace of figures.
 				startPoint = null; //Reset the start point.
-				LastAction lastAct = new LastAction(ActionType.DRAW,newFigure,newFigure, (canvas,of,nf) -> canvas.deleteFigure(of), (canvas,of,nf) -> canvas.addFigure(of));
+				//oldFig represent old figure and newFig represent new figure after the action has been executed in lambda expression.
+				LastAction lastAct = new LastAction(ActionType.DRAW,newFigure,newFigure, (canvas,oldFig,newFig) -> canvas.deleteFigure(oldFig), (canvas,oldFig,newFig) -> canvas.addFigure(oldFig));
 				lastAction.saveVersion(lastAct);
 				lastAction.clearRedo(); //Reset redo versions
 				updateLabels();
@@ -434,7 +436,8 @@ public class PaintPane extends BorderPane {
 		}
 		FormatFigure oldFigure = figure.getFigureCopy();
 		figure.setFormat(copiedFormat);
-		LastAction lastAct = new LastAction(ActionType.COPY_FORMAT,oldFigure,figure, (canvas,of,nf) -> canvas.changeFormat(nf,of.getFormat()), (canvas,of,nf) -> canvas.changeFormat(of,nf.getFormat()));
+		//oldFig represent old figure and newFig represent new figure after the action has been executed in lambda expression.
+		LastAction lastAct = new LastAction(ActionType.COPY_FORMAT,oldFigure,figure, (canvas,oldFig,newFig) -> canvas.changeFormat(newFig,oldFig.getFormat()), (canvas,oldFig,newFig) -> canvas.changeFormat(oldFig,newFig.getFormat()));
 		lastAction.saveVersion(lastAct);
 		copiedFormat = null;
 
