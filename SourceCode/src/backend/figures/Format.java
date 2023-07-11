@@ -1,4 +1,4 @@
-package backend.model;
+package backend.figures;
 
 public class Format {
     private String lineColor;

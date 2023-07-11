@@ -3,6 +3,8 @@ package frontend;
 import backend.CanvasState;
 import frontend.customLayouts.ActionMenu;
 import frontend.customLayouts.TagsBar;
+import frontend.pane.PaintPane;
+import frontend.pane.StatusPane;
 import javafx.scene.layout.VBox;
 
 public class MainFrame extends VBox {

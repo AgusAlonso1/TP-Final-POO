@@ -1,7 +1,7 @@
 package backend;
 
-import backend.model.Format;
-import backend.model.FormatFigure;
+import backend.figures.Format;
+import backend.figures.FormatFigure;
 import java.util.*;
 
 public class CanvasState {

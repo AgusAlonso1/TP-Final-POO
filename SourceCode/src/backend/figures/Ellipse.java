@@ -1,11 +1,11 @@
-package backend.model;
+package backend.figures;
 
 import backend.FigureDrawer;
 
 public class Ellipse extends FormatFigure {
 
-    protected final Point centerPoint;
-    protected final double sMayorAxis, sMinorAxis;
+    private final Point centerPoint;
+    private final double sMayorAxis, sMinorAxis;
 
     //sMayorAxis and sMinorAxis are the diameters.
     public Ellipse(FigureDrawer fg, Format format, String layer, Point centerPoint, double sMayorAxis, double sMinorAxis) {

@@ -1,6 +1,6 @@
 package backend.actions;
 
-import backend.model.FormatFigure;
+import backend.figures.FormatFigure;
 
 public class LastAction {
     private final ActionType actionType;

@@ -1,7 +1,7 @@
 package frontend.customTools;
 
 import backend.FigureDrawer;
-import backend.model.Format;
+import backend.figures.Format;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

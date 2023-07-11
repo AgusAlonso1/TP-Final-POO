@@ -1,7 +1,7 @@
-package frontend;
+package frontend.customTools;
 
 import backend.FigureDrawer;
-import backend.model.*;
+import backend.figures.*;
 
 public enum ButtonType { //Enun to diferentiate button types.
     RECTANGLE {

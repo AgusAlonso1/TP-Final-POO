@@ -1,10 +1,9 @@
 package frontend.customTools;
 
-import frontend.ButtonType;
 import backend.FigureDrawer;
-import backend.model.Format;
-import backend.model.FormatFigure;
-import backend.model.Point;
+import backend.figures.Format;
+import backend.figures.FormatFigure;
+import backend.figures.Point;
 import javafx.scene.control.ToggleButton;
 
 public class EspecifiedToggleButton extends ToggleButton { //Class which adds distinction to the buttons in the app.

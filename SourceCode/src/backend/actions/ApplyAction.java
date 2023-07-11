@@ -1,7 +1,7 @@
 package backend.actions;
 
 import backend.CanvasState;
-import backend.model.FormatFigure;
+import backend.figures.FormatFigure;
 
 @FunctionalInterface
 public interface ApplyAction {

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.figures;
 
 import backend.FigureDrawer;
 
@@ -58,6 +58,5 @@ public abstract class FormatFigure {
         }
         return builder.toString();
     }
-
     public abstract FormatFigure getFigureCopy();
 }
